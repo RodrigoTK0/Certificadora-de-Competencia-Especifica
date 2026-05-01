@@ -1,111 +1,41 @@
-// Global Application Logic
+// Lógica Geral do App - Controla interações globais como Modais
 
+// Abre a janela modal correta baseada no tipo (client ou vehicle)
 function openModal(type) {
-    const modal = document.getElementById('modal-container');
-    const content = document.getElementById('modal-content');
+    const container = document.getElementById('modal-container');
     
-    if (type === 'client') {
-        content.innerHTML = `
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-                <h2>Novo Cliente</h2>
-                <button class="btn glass" onclick="closeModal()"><i data-lucide="x"></i></button>
-            </div>
-            <form onsubmit="event.preventDefault(); alert('Cliente cadastrado!'); closeModal();">
-                <div class="form-group">
-                    <label>Nome Completo</label>
-                    <input type="text" required>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                    <div class="form-group">
-                        <label>CPF/CNPJ</label>
-                        <input type="text">
-                    </div>
-                    <div class="form-group">
-                        <label>Telefone</label>
-                        <input type="text" required>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>E-mail</label>
-                    <input type="email">
-                </div>
-                <div class="form-group">
-                    <label>Endereço</label>
-                    <input type="text">
-                </div>
-                <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem;">
-                    <button type="button" class="btn glass" onclick="closeModal()">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Salvar Cliente</button>
-                </div>
-            </form>
-        `;
-    } else if (type === 'vehicle') {
-        content.innerHTML = `
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-                <h2>Novo Veículo</h2>
-                <button class="btn glass" onclick="closeModal()"><i data-lucide="x"></i></button>
-            </div>
-            <form onsubmit="event.preventDefault(); alert('Veículo cadastrado!'); closeModal();">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                    <div class="form-group">
-                        <label>Placa</label>
-                        <input type="text" placeholder="ABC-1234" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Proprietário</label>
-                        <select required>
-                            <option value="">Selecione...</option>
-                            <option>João Silva</option>
-                            <option>Maria Souza</option>
-                        </select>
-                    </div>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                    <div class="form-group">
-                        <label>Marca</label>
-                        <input type="text" placeholder="Ex: Toyota" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Modelo</label>
-                        <input type="text" placeholder="Ex: Corolla" required>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Cor / Ano</label>
-                    <input type="text" placeholder="Ex: Prata / 2020">
-                </div>
-                <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem;">
-                    <button type="button" class="btn glass" onclick="closeModal()">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Salvar Veículo</button>
-                </div>
-            </form>
-        `;
+    // Esconde todos os corpos de modal primeiro
+    document.querySelectorAll('.modal-body').forEach(el => el.style.display = 'none');
+    
+    // Mostra o modal específico solicitado
+    const targetModal = document.getElementById(`modal-type-${type}`);
+    if (targetModal) {
+        targetModal.style.display = 'block';
+        container.style.display = 'flex';
+        
+        // Atualiza os ícones dentro do modal
+        if (window.lucide) lucide.createIcons();
     }
-    
-    modal.style.display = 'flex';
-    lucide.createIcons();
 }
 
+// Fecha a janela modal
 function closeModal() {
     document.getElementById('modal-container').style.display = 'none';
 }
 
-// Close modal on outside click
+// Fecha se clicar fora da área branca do modal
 window.onclick = function(event) {
-    const modal = document.getElementById('modal-container');
-    if (event.target == modal) {
+    const container = document.getElementById('modal-container');
+    if (event.target == container) {
         closeModal();
     }
 }
 
-// Placeholder for future state management
+// Estado global simples do app
 const AppState = {
-    user: {
-        name: 'Jose Garcia',
-        role: 'Admin'
-    },
+    user: { name: 'Jose Garcia', role: 'Admin' },
     orders: [],
     clients: []
 };
 
-console.log('SOS Application Initialized');
+console.log('SOS pronto para uso! 🚀');
