@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
+
 <body>
     <div id="app">
         <!-- Tela de Login -->
@@ -20,13 +22,14 @@
                 <form id="login-form">
                     <div class="form-group">
                         <label>E-mail</label>
-                        <input type="email" placeholder="seu@email.com" value="admin@oficina.com" required>
+                        <input type="email" name="email" placeholder="seu@email.com" value="admin@oficina.com" required>
                     </div>
                     <div class="form-group">
                         <label>Senha</label>
-                        <input type="password" placeholder="••••••••" value="123456" required>
+                        <input type="password" name="senha" placeholder="••••••••" value="123456" required>
                     </div>
-                    <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 1rem;">
+                    <button type="submit" class="btn btn-primary"
+                        style="width: 100%; justify-content: center; margin-top: 1rem;">
                         Entrar
                     </button>
                 </form>
@@ -42,15 +45,29 @@
                 </div>
                 <nav>
                     <ul class="nav-links">
-                        <li><a href="#dashboard" class="nav-link" data-link="dashboard"><i data-lucide="layout-dashboard"></i> <span>Dashboard</span></a></li>
-                        <li><a href="#clients" class="nav-link" data-link="clients"><i data-lucide="users"></i> <span>Clientes</span></a></li>
-                        <li><a href="#vehicles" class="nav-link" data-link="vehicles"><i data-lucide="car"></i> <span>Veículos</span></a></li>
-                        <li><a href="#orders" class="nav-link" data-link="orders"><i data-lucide="file-text"></i> <span>Ordens S.V.</span></a></li>
-                        <li><a href="#settings" class="nav-link" data-link="settings"><i data-lucide="settings"></i> <span>Configurações</span></a></li>
+                        <li><a href="#dashboard" class="nav-link" data-link="dashboard"><i
+                                    data-lucide="layout-dashboard"></i> <span>Dashboard</span></a></li>
+                        <li><a href="#clients" class="nav-link" data-link="clients"><i data-lucide="users"></i>
+                                <span>Clientes</span></a></li>
+                        <li><a href="#vehicles" class="nav-link" data-link="vehicles"><i data-lucide="car"></i>
+                                <span>Veículos</span></a></li>
+                        <li><a href="#orders" class="nav-link" data-link="orders"><i data-lucide="file-text"></i>
+                                <span>Ordens S.V.</span></a></li>
+                        <li>
+                            <a href="#reports" class="nav-link" data-link="reports">
+                                <i data-lucide="bar-chart-3"></i>
+                                <span>Relatórios</span>
+                            </a>
+                        </li>
+                        </li>
+                        <li><a href="#settings" class="nav-link" data-link="settings"><i data-lucide="settings"></i>
+                                <span>Configurações</span></a></li>
                     </ul>
                 </nav>
                 <div style="margin-top: auto;">
-                    <a href="#login" class="nav-link" style="color: var(--danger);"><i data-lucide="log-out"></i> <span>Sair</span></a>
+                    <a href="#login" class="nav-link" style="color: var(--danger);"
+                        onclick="localStorage.removeItem('usuario')">
+                        <span>Sair</span></a>
                 </div>
             </aside>
 
@@ -68,33 +85,37 @@
                     </div>
 
                     <div class="stats-grid">
-                        <div class="glass stat-card">
+
+                        <div class="glass stat-card" id="card-open-orders">
                             <div class="stat-icon" style="background: rgba(59, 130, 246, 0.1); color: var(--primary);">
                                 <i data-lucide="clipboard-list"></i>
                             </div>
                             <div class="stat-info">
-                                <h3>12</h3>
+                                <h3 class="card-value">0</h3>
                                 <p>Ordens Abertas</p>
                             </div>
                         </div>
-                        <div class="glass stat-card">
+
+                        <div class="glass stat-card" id="card-completed-orders">
                             <div class="stat-icon" style="background: rgba(34, 197, 94, 0.1); color: var(--success);">
                                 <i data-lucide="check-circle"></i>
                             </div>
                             <div class="stat-info">
-                                <h3>45</h3>
+                                <h3 class="card-value">0</h3>
                                 <p>Concluídas</p>
                             </div>
                         </div>
-                        <div class="glass stat-card">
+
+                        <div class="glass stat-card" id="card-active-clients">
                             <div class="stat-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--warning);">
                                 <i data-lucide="users"></i>
                             </div>
                             <div class="stat-info">
-                                <h3>128</h3>
+                                <h3 class="card-value">0</h3>
                                 <p>Clientes Ativos</p>
                             </div>
                         </div>
+
                     </div>
 
                     <div class="glass" style="padding: 1.5rem;">
@@ -177,76 +198,163 @@
                     </div>
                 </section>
 
+                <!-- Seção de Ordens de Serviço -->
+                <section id="view-orders" class="view" style="display: none;">
+                    <div class="header-row">
+                        <h1 style="font-size: 2rem;">Ordens de Serviço</h1>
+                        <button class="btn btn-primary" onclick="window.location.hash = '#new-order'">
+                            <i data-lucide="plus"></i> Nova Ordem
+                        </button>
+                    </div>
+
+                    <div class="glass" style="padding: 1.5rem;">
+                        <div class="table-container">
+                            <table id="table-orders">
+                                <thead>
+                                    <tr>
+                                        <th>Nº OS</th>
+                                        <th>Cliente</th>
+                                        <th>Veículo</th>
+                                        <th>Descrição</th>
+                                        <th>Status</th>
+                                        <th>Valor</th>
+                                        <th>Data</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Dados via JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+                <!-- Seção de Relatórios -->
+                <section id="view-reports" class="view" style="display: none;">
+
+                    <div class="header-row">
+                        <h1 style="font-size: 2rem;">Relatórios do Sistema</h1>
+                    </div>
+
+                    <div class="stats-grid">
+
+                        <div class="glass stat-card">
+                            <div class="stat-info">
+                                <h3 id="report-clientes">0</h3>
+                                <p>Clientes</p>
+                            </div>
+                        </div>
+
+                        <div class="glass stat-card">
+                            <div class="stat-info">
+                                <h3 id="report-veiculos">0</h3>
+                                <p>Veículos</p>
+                            </div>
+                        </div>
+
+                        <div class="glass stat-card">
+                            <div class="stat-info">
+                                <h3 id="report-abertas">0</h3>
+                                <p>Ordens Abertas</p>
+                            </div>
+                        </div>
+
+                        <div class="glass stat-card">
+                            <div class="stat-info">
+                                <h3 id="report-andamento">0</h3>
+                                <p>Em Andamento</p>
+                            </div>
+                        </div>
+
+                        <div class="glass stat-card">
+                            <div class="stat-info">
+                                <h3 id="report-concluidas">0</h3>
+                                <p>Concluídas</p>
+                            </div>
+                        </div>
+
+                        <div class="glass stat-card">
+                            <div class="stat-info">
+                                <h3 id="report-faturamento">R$ 0,00</h3>
+                                <p>Faturamento</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </section>
                 <!-- Tela de Nova Ordem de Serviço -->
                 <section id="view-new-order" class="view" style="display: none;">
+
                     <div class="header-row">
                         <h1 style="font-size: 2rem;">Nova Ordem de Serviço</h1>
-                        <button class="btn glass" onclick="window.location.hash = '#dashboard'">Cancelar</button>
+
+                        <button class="btn glass" onclick="window.location.hash = '#dashboard'">
+                            Cancelar
+                        </button>
                     </div>
-                    <div style="display: grid; grid-template-columns: 1fr 400px; gap: 2rem;">
-                        <div class="glass" style="padding: 2rem;">
-                            <h3 style="margin-bottom: 1.5rem;">Informações Gerais</h3>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+
+                    <form id="form-order">
+
+                        <div style="display: grid; grid-template-columns: 1fr 400px; gap: 2rem;">
+
+                            <div class="glass" style="padding: 2rem;">
+
+                                <h3 style="margin-bottom: 1.5rem;">Informações Gerais</h3>
+
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+
+                                    <div class="form-group">
+                                        <label>Cliente</label>
+
+                                        <select id="os-client" name="cliente_id" required>
+                                            <option value="">Selecione um cliente...</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Veículo</label>
+
+                                        <select id="os-vehicle" name="veiculo_id" required>
+                                            <option value="">Selecione um veículo...</option>
+                                        </select>
+                                    </div>
+
+                                </div>
+
                                 <div class="form-group">
-                                    <label>Cliente</label>
-                                    <select id="os-client">
-                                        <option>Selecione um cliente...</option>
-                                        <option>João Silva</option>
-                                        <option>Maria Souza</option>
-                                    </select>
+                                    <label>Descrição do Problema</label>
+
+                                    <textarea name="descricao" rows="4"
+                                        placeholder="Descreva os sintomas relatados pelo cliente..."
+                                        required></textarea>
                                 </div>
-                                <div class="form-group">
-                                    <label>Veículo</label>
-                                    <select id="os-vehicle">
-                                        <option>Selecione um veículo...</option>
-                                        <option>Toyota Corolla (ABC-1234)</option>
-                                        <option>Honda Civic (XYZ-9876)</option>
-                                    </select>
+
+                            </div>
+
+                            <div class="glass" style="padding: 2rem; height: fit-content;">
+
+                                <h3 style="margin-bottom: 1.5rem;">Resumo</h3>
+
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 2rem;">
+                                    <strong>Status Inicial:</strong>
+                                    <strong style="color: var(--warning);">Aberta</strong>
                                 </div>
+
+                                <button type="submit" class="btn btn-primary"
+                                    style="width: 100%; justify-content: center;">
+
+                                    <i data-lucide="save"></i>
+                                    Salvar Ordem
+
+                                </button>
+
                             </div>
-                            <div class="form-group">
-                                <label>Descrição do Problema</label>
-                                <textarea rows="4" placeholder="Descreva os sintomas relatados pelo cliente..."></textarea>
-                            </div>
-                            <h3 style="margin: 2rem 0 1.5rem;">Peças e Serviços</h3>
-                            <div id="items-list" style="display: flex; flex-direction: column; gap: 1rem;">
-                                <div style="display: flex; gap: 1rem; align-items: flex-end;">
-                                    <div style="flex: 2;">
-                                        <label style="font-size: 0.8rem; color: var(--text-muted);">Descrição</label>
-                                        <input type="text" placeholder="Ex: Óleo 5W30">
-                                    </div>
-                                    <div style="flex: 0.5;">
-                                        <label style="font-size: 0.8rem; color: var(--text-muted);">Qtd</label>
-                                        <input type="number" value="1">
-                                    </div>
-                                    <div style="flex: 1;">
-                                        <label style="font-size: 0.8rem; color: var(--text-muted);">Preço Unit.</label>
-                                        <input type="text" placeholder="R$ 0,00">
-                                    </div>
-                                    <button class="btn btn-primary" style="padding: 0.75rem;"><i data-lucide="plus"></i></button>
-                                </div>
-                            </div>
+
                         </div>
-                        <div class="glass" style="padding: 2rem; height: fit-content;">
-                            <h3 style="margin-bottom: 1.5rem;">Resumo de Valores</h3>
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
-                                <span style="color: var(--text-muted);">Total Peças:</span>
-                                <span>R$ 0,00</span>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
-                                <span style="color: var(--text-muted);">Total Mão de Obra:</span>
-                                <span>R$ 0,00</span>
-                            </div>
-                            <hr style="border: 0; border-top: 1px solid var(--border); margin: 1rem 0;">
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 2rem;">
-                                <strong style="font-size: 1.25rem;">Total Geral:</strong>
-                                <strong style="font-size: 1.25rem; color: var(--primary);">R$ 0,00</strong>
-                            </div>
-                            <button class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="alert('O.S. Salva com sucesso!')">
-                                <i data-lucide="save"></i> Salvar Ordem
-                            </button>
-                        </div>
-                    </div>
+
+                    </form>
+
                 </section>
             </main>
         </div>
@@ -255,40 +363,57 @@
     <!-- Janelas Modais -->
     <div id="modal-container" class="modal-overlay">
         <div id="modal-content" class="glass modal-content">
-            
+
             <!-- Modal Novo Cliente -->
             <div id="modal-type-client" class="modal-body" style="display: none;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
                     <h2>Novo Cliente</h2>
-                    <button class="btn glass" onclick="closeModal()"><i data-lucide="x"></i></button>
+                    <button class="btn glass" onclick="closeModal()">
+                        <i data-lucide="x"></i>
+                    </button>
                 </div>
-                <form onsubmit="event.preventDefault(); alert('Cliente cadastrado!'); closeModal();">
+
+                <form id="form-client">
+
                     <div class="form-group">
                         <label>Nome Completo</label>
-                        <input type="text" required>
+                        <input type="text" name="nome" required>
                     </div>
+
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+
                         <div class="form-group">
                             <label>CPF/CNPJ</label>
                             <input type="text">
                         </div>
+
                         <div class="form-group">
                             <label>Telefone</label>
-                            <input type="text" required>
+                            <input type="text" name="telefone" required>
                         </div>
+
                     </div>
+
                     <div class="form-group">
                         <label>E-mail</label>
-                        <input type="email">
+                        <input type="email" name="email">
                     </div>
+
                     <div class="form-group">
                         <label>Endereço</label>
-                        <input type="text">
+                        <input type="text" name="endereco">
                     </div>
+
                     <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem;">
-                        <button type="button" class="btn glass" onclick="closeModal()">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Salvar Cliente</button>
+                        <button type="button" class="btn glass" onclick="closeModal()">
+                            Cancelar
+                        </button>
+
+                        <button type="submit" class="btn btn-primary">
+                            Salvar Cliente
+                        </button>
                     </div>
+
                 </form>
             </div>
 
@@ -298,35 +423,39 @@
                     <h2>Novo Veículo</h2>
                     <button class="btn glass" onclick="closeModal()"><i data-lucide="x"></i></button>
                 </div>
-                <form onsubmit="event.preventDefault(); alert('Veículo cadastrado!'); closeModal();">
+
+                <form id="form-vehicle">
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                         <div class="form-group">
                             <label>Placa</label>
-                            <input type="text" placeholder="ABC-1234" required>
+                            <input type="text" name="placa" placeholder="ABC-1234" required>
                         </div>
+
                         <div class="form-group">
                             <label>Proprietário</label>
-                            <select required>
+                            <select name="cliente_id" id="vehicle-client" required>
                                 <option value="">Selecione...</option>
-                                <option>João Silva</option>
-                                <option>Maria Souza</option>
                             </select>
                         </div>
                     </div>
+
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                         <div class="form-group">
                             <label>Marca</label>
-                            <input type="text" placeholder="Ex: Toyota" required>
+                            <input type="text" name="marca" placeholder="Ex: Toyota" required>
                         </div>
+
                         <div class="form-group">
                             <label>Modelo</label>
-                            <input type="text" placeholder="Ex: Corolla" required>
+                            <input type="text" name="modelo" placeholder="Ex: Corolla" required>
                         </div>
                     </div>
+
                     <div class="form-group">
-                        <label>Cor / Ano</label>
-                        <input type="text" placeholder="Ex: Prata / 2020">
+                        <label>Ano</label>
+                        <input type="number" name="ano" placeholder="Ex: 2020">
                     </div>
+
                     <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem;">
                         <button type="button" class="btn glass" onclick="closeModal()">Cancelar</button>
                         <button type="submit" class="btn btn-primary">Salvar Veículo</button>
@@ -340,4 +469,5 @@
     <script src="js/router.js"></script>
     <script src="js/app.js"></script>
 </body>
+
 </html>

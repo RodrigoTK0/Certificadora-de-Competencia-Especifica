@@ -276,3 +276,21 @@ td {
         display: none;
     }
 }
+select {
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0.6rem 0.8rem;
+    border-radius: 10px;
+    outline: none;
+    transition: 0.2s;
+}
+
+select:focus {
+    border-color: #3b82f6;
+}
+
+select option {
+    background: #0f172a;
+    color: white;
+}
