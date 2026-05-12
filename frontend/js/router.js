@@ -127,9 +127,20 @@ async function renderClientsData() {
                 <td>${c.email}</td>
                 <td>${c.veiculos || 'Nenhum veículo'}</td>
                 <td>
-                    <button class="btn glass" style="padding: 0.4rem;">
-                        <i data-lucide="edit" style="width: 16px;"></i>
-                    </button>
+                    <div style="display: flex; gap: 0.5rem;">
+
+                        <button class="btn glass" style="padding: 0.4rem;">
+                            <i data-lucide="edit" style="width: 16px;"></i>
+                        </button>
+
+                        <button class="btn glass"
+                            style="padding: 0.4rem; color: var(--danger);"
+                            onclick="excluirCliente(${c.id})">
+
+                            <i data-lucide="trash-2" style="width: 16px;"></i>
+                        </button>
+
+                    </div>
                 </td>
             </tr>
         `).join('');
@@ -161,9 +172,20 @@ async function renderVehiclesData() {
                 <td>${v.marca}</td>
                 <td>${v.cliente_nome}</td>
                 <td>
+                    <div style="display: flex; gap: 0.5rem;">
+
                     <button class="btn glass" style="padding: 0.4rem;">
                         <i data-lucide="edit" style="width: 16px;"></i>
                     </button>
+
+                    <button class="btn glass"
+                         style="padding: 0.4rem; color: var(--danger);"
+                            onclick="excluirVeiculo(${v.id})">
+
+                                <i data-lucide="trash-2" style="width: 16px;"></i>
+                    </button>
+
+</div>
                 </td>
             </tr>
         `).join('');
@@ -210,6 +232,9 @@ async function renderOrdersData() {
 
                         <button class="btn glass" onclick="abrirDetalhesOrdem(${o.id})">
                             Ver Detalhes
+                        </button>
+                        <button class="btn glass" style="color: var(--danger);" onclick="excluirOrdem(${o.id})">
+                             Excluir
                         </button>
                     </td>
                 </tr>
@@ -398,17 +423,17 @@ async function abrirDetalhesOrdem(ordemId) {
                     </thead>
                     <tbody>
                         ${itens.map(item => {
-                            const valor = Number(item.valor);
-                            total += valor;
+            const valor = Number(item.valor);
+            total += valor;
 
-                            return `
+            return `
                                 <tr>
                                     <td>${item.tipo}</td>
                                     <td>${item.descricao}</td>
                                     <td>R$ ${valor.toFixed(2).replace('.', ',')}</td>
                                 </tr>
                             `;
-                        }).join('')}
+        }).join('')}
                     </tbody>
                 </table>
             </div>
@@ -428,4 +453,80 @@ async function abrirDetalhesOrdem(ordemId) {
 
 function fecharDetalhesOrdem() {
     document.getElementById('modal-order-details').style.display = 'none';
+}
+async function excluirOrdem(id) {
+    const confirmar = confirm('Tem certeza que deseja excluir esta ordem de serviço?');
+
+    if (!confirmar) return;
+
+    const formData = new FormData();
+    formData.append('id', id);
+
+    const response = await fetch('http://localhost/Certificadora-de-Competencia-Especifica/backend/routes/excluir_ordem.php', {
+        method: 'POST',
+        body: formData
+    });
+
+    const result = await response.json();
+
+    showToast(result.message, result.success ? 'success' : 'error');
+
+    if (result.success) {
+        renderOrdersData();
+        renderDashboardData();
+    }
+}
+async function excluirCliente(id) {
+
+    const confirmar = confirm('Deseja excluir este cliente?');
+
+    if (!confirmar) return;
+
+    const formData = new FormData();
+
+    formData.append('id', id);
+
+    const response = await fetch(
+        'http://localhost/Certificadora-de-Competencia-Especifica/backend/routes/excluir_cliente.php',
+        {
+            method: 'POST',
+            body: formData
+        }
+    );
+
+    const result = await response.json();
+
+    showToast(result.message, result.success ? 'success' : 'error');
+
+    if (result.success) {
+        renderClientsData();
+        renderDashboardData();
+    }
+}
+async function excluirVeiculo(id) {
+
+    const confirmar = confirm('Deseja excluir este veículo?');
+
+    if (!confirmar) return;
+
+    const formData = new FormData();
+
+    formData.append('id', id);
+
+    const response = await fetch(
+        'http://localhost/Certificadora-de-Competencia-Especifica/backend/routes/excluir_veiculo.php',
+        {
+            method: 'POST',
+            body: formData
+        }
+    );
+
+    const result = await response.json();
+
+    showToast(result.message, result.success ? 'success' : 'error');
+
+    if (result.success) {
+        renderVehiclesData();
+        renderDashboardData();
+    }
 }
