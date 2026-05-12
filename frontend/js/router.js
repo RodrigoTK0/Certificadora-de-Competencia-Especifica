@@ -8,7 +8,7 @@ const views = {
     'orders': { title: 'Ordens - SOS', el: 'view-orders', layout: true },
     'new-order': { title: 'Nova O.S. - SOS', el: 'view-new-order', layout: true },
     'reports': { title: 'Relatórios - SOS', el: 'view-reports', layout: true }
-    
+
 };
 
 // Gerencia a navegação
@@ -208,8 +208,8 @@ async function renderOrdersData() {
                              + Item
                         </button>
 
-                        <button class="btn glass" onclick="verItensOrdem(${o.id})">
-                            Ver Itens
+                        <button class="btn glass" onclick="abrirDetalhesOrdem(${o.id})">
+                            Ver Detalhes
                         </button>
                     </td>
                 </tr>
@@ -362,4 +362,66 @@ async function verItensOrdem(ordemId) {
     mensagem += `\nTotal dos itens: R$ ${total.toFixed(2).replace('.', ',')}`;
 
     alert(mensagem);
+}
+async function abrirDetalhesOrdem(ordemId) {
+    const response = await fetch(`http://localhost/Certificadora-de-Competencia-Especifica/backend/routes/listar_itens_ordem.php?ordem_id=${ordemId}`);
+    const itens = await response.json();
+
+    const modal = document.getElementById('modal-order-details');
+    const title = document.getElementById('order-details-title');
+    const content = document.getElementById('order-details-content');
+
+    title.textContent = `Detalhes da Ordem #${String(ordemId).padStart(3, '0')}`;
+
+    if (itens.length === 0) {
+        content.innerHTML = `
+            <p style="color: var(--text-muted);">
+                Nenhum item foi adicionado nesta ordem de serviço.
+            </p>
+        `;
+    } else {
+        let total = 0;
+
+        content.innerHTML = `
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tipo</th>
+                            <th>Descrição</th>
+                            <th>Valor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${itens.map(item => {
+                            const valor = Number(item.valor);
+                            total += valor;
+
+                            return `
+                                <tr>
+                                    <td>${item.tipo}</td>
+                                    <td>${item.descricao}</td>
+                                    <td>R$ ${valor.toFixed(2).replace('.', ',')}</td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; margin-top: 1.5rem;">
+                <strong style="font-size: 1.2rem; color: var(--primary);">
+                    Total: R$ ${total.toFixed(2).replace('.', ',')}
+                </strong>
+            </div>
+        `;
+    }
+
+    modal.style.display = 'flex';
+
+    if (window.lucide) lucide.createIcons();
+}
+
+function fecharDetalhesOrdem() {
+    document.getElementById('modal-order-details').style.display = 'none';
 }
