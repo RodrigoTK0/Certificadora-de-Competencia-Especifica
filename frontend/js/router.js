@@ -301,7 +301,7 @@ window.addEventListener('load', () => {
 
             const result = await response.json();
 
-            alert(result.message);
+            showToast(result.message, result.success ? 'success' : 'error');
 
             if (result.success) {
                 localStorage.setItem('usuario', JSON.stringify(result.usuario));
@@ -333,7 +333,7 @@ async function atualizarStatus(id, status) {
         renderOrdersData();
         renderDashboardData();
     } else {
-        alert(result.message);
+        showToast(result.message, 'error');
     }
 }
 async function abrirAdicionarItem(ordemId) {
@@ -359,36 +359,14 @@ async function abrirAdicionarItem(ordemId) {
 
     const result = await response.json();
 
-    alert(result.message);
+    showToast(result.message, result.success ? 'success' : 'error');
 
     if (result.success) {
         renderOrdersData();
         renderDashboardData();
     }
 }
-async function verItensOrdem(ordemId) {
-    const response = await fetch(`http://localhost/Certificadora-de-Competencia-Especifica/backend/routes/listar_itens_ordem.php?ordem_id=${ordemId}`);
-    const itens = await response.json();
 
-    if (itens.length === 0) {
-        alert('Nenhum item cadastrado nesta ordem.');
-        return;
-    }
-
-    let mensagem = `Itens da Ordem #${String(ordemId).padStart(3, '0')}:\n\n`;
-    let total = 0;
-
-    itens.forEach(item => {
-        const valor = Number(item.valor);
-        total += valor;
-
-        mensagem += `${item.tipo}: ${item.descricao} - R$ ${valor.toFixed(2).replace('.', ',')}\n`;
-    });
-
-    mensagem += `\nTotal dos itens: R$ ${total.toFixed(2).replace('.', ',')}`;
-
-    alert(mensagem);
-}
 async function abrirDetalhesOrdem(ordemId) {
     const response = await fetch(`http://localhost/Certificadora-de-Competencia-Especifica/backend/routes/listar_itens_ordem.php?ordem_id=${ordemId}`);
     const itens = await response.json();

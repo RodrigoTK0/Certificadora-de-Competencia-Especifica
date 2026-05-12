@@ -59,7 +59,7 @@ if (formClient) {
 
         const result = await response.json();
 
-        alert(result.message);
+        showToast(result.message);
 
         if (result.success) {
             formClient.reset();
@@ -99,7 +99,7 @@ if (formVehicle) {
 
         const result = await response.json();
 
-        alert(result.message);
+        showToast(result.message);
 
         if (result.success) {
             formVehicle.reset();
@@ -168,7 +168,7 @@ if (formOrder) {
 
         const result = await response.json();
 
-        alert(result.message);
+      showToast(result.message);
 
         if (result.success) {
 
@@ -179,4 +179,20 @@ if (formOrder) {
             renderDashboardData();
         }
     });
+}
+function showToast(message, type = 'success') {
+
+    const container = document.getElementById('toast-container');
+
+    const toast = document.createElement('div');
+
+    toast.className = `toast toast-${type}`;
+
+    toast.textContent = message;
+
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.remove();
+    }, 3000);
 }
