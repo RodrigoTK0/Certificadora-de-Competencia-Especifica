@@ -227,10 +227,10 @@ async function renderOrdersData() {
         `;
     }
 }
+let statusChart = null;
+
 async function renderReportsData() {
-
     try {
-
         const response = await fetch(
             'http://localhost/Certificadora-de-Competencia-Especifica/backend/routes/relatorios.php'
         );
@@ -238,22 +238,48 @@ async function renderReportsData() {
         const data = await response.json();
 
         document.getElementById('report-clientes').textContent = data.total_clientes;
-
         document.getElementById('report-veiculos').textContent = data.total_veiculos;
-
         document.getElementById('report-abertas').textContent = data.ordens_abertas;
-
         document.getElementById('report-andamento').textContent = data.ordens_andamento;
-
         document.getElementById('report-concluidas').textContent = data.ordens_concluidas;
 
         document.getElementById('report-faturamento').textContent =
             `R$ ${Number(data.faturamento).toFixed(2).replace('.', ',')}`;
 
+        const ctx = document.getElementById('chart-status-orders');
+
+        if (ctx) {
+            if (statusChart) {
+                statusChart.destroy();
+            }
+
+            statusChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Abertas', 'Em andamento', 'Concluídas'],
+                    datasets: [{
+                        data: [
+                            data.ordens_abertas,
+                            data.ordens_andamento,
+                            data.ordens_concluidas
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#ffffff'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
     } catch (error) {
-
         console.error('Erro ao carregar relatórios:', error);
-
     }
 }
 // Inicializa a navegação e eventos
