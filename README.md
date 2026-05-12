@@ -42,7 +42,6 @@ O sistema permite:
 * VS Code
 * phpMyAdmin
 * Trello
-* Figma
 
 ---
 
