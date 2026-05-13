@@ -73,295 +73,303 @@
 
             <main class="content">
                 <!-- Dashboard -->
-                <section id="view-dashboard" class="view">
-                    <div class="header-row">
-                        <div>
-                            <h1 style="font-size: 2rem;">Bem-vindo, Jose!</h1>
-                            <p style="color: var(--text-muted);">Aqui está o resumo da sua oficina hoje.</p>
-                        </div>
-                        <button class="btn btn-primary" onclick="window.location.hash = '#new-order'">
-                            <i data-lucide="plus"></i> Nova Ordem
-                        </button>
-                    </div>
 
-                    <div class="stats-grid">
-
-                        <div class="glass stat-card" id="card-open-orders">
-                            <div class="stat-icon" style="background: rgba(59, 130, 246, 0.1); color: var(--primary);">
-                                <i data-lucide="clipboard-list"></i>
+                <div style="margin-bottom: 1rem;">
+                    <button id="menu-toggle" class="btn glass" style="display: none;">
+                        <i data-lucide="menu"></i>
+                    </button>
+                    <section id="view-dashboard" class="view">
+                        <div class="header-row">
+                            <div>
+                                <h1 style="font-size: 2rem;">Bem-vindo, Jose!</h1>
+                                <p style="color: var(--text-muted);">Aqui está o resumo da sua oficina hoje.</p>
                             </div>
-                            <div class="stat-info">
-                                <h3 class="card-value">0</h3>
-                                <p>Ordens Abertas</p>
+                            <button class="btn btn-primary" onclick="window.location.hash = '#new-order'">
+                                <i data-lucide="plus"></i> Nova Ordem
+                            </button>
+                        </div>
+
+                        <div class="stats-grid">
+
+                            <div class="glass stat-card" id="card-open-orders">
+                                <div class="stat-icon"
+                                    style="background: rgba(59, 130, 246, 0.1); color: var(--primary);">
+                                    <i data-lucide="clipboard-list"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3 class="card-value">0</h3>
+                                    <p>Ordens Abertas</p>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="glass stat-card" id="card-completed-orders">
-                            <div class="stat-icon" style="background: rgba(34, 197, 94, 0.1); color: var(--success);">
-                                <i data-lucide="check-circle"></i>
+                            <div class="glass stat-card" id="card-completed-orders">
+                                <div class="stat-icon"
+                                    style="background: rgba(34, 197, 94, 0.1); color: var(--success);">
+                                    <i data-lucide="check-circle"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3 class="card-value">0</h3>
+                                    <p>Concluídas</p>
+                                </div>
                             </div>
-                            <div class="stat-info">
-                                <h3 class="card-value">0</h3>
-                                <p>Concluídas</p>
+
+                            <div class="glass stat-card" id="card-active-clients">
+                                <div class="stat-icon"
+                                    style="background: rgba(245, 158, 11, 0.1); color: var(--warning);">
+                                    <i data-lucide="users"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3 class="card-value">0</h3>
+                                    <p>Clientes Ativos</p>
+                                </div>
                             </div>
+
                         </div>
 
-                        <div class="glass stat-card" id="card-active-clients">
-                            <div class="stat-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--warning);">
-                                <i data-lucide="users"></i>
-                            </div>
-                            <div class="stat-info">
-                                <h3 class="card-value">0</h3>
-                                <p>Clientes Ativos</p>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="glass" style="padding: 1.5rem;">
-                        <h2 style="margin-bottom: 1.5rem; font-size: 1.25rem;">Últimas Ordens de Serviço</h2>
-                        <div class="table-container">
-                            <table id="table-recent-orders">
-                                <thead>
-                                    <tr>
-                                        <th>Nº OS</th>
-                                        <th>Cliente</th>
-                                        <th>Veículo</th>
-                                        <th>Status</th>
-                                        <th>Valor</th>
-                                        <th>Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <!-- Os dados vão aparecer via JavaScript -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Seção de Clientes -->
-                <section id="view-clients" class="view" style="display: none;">
-                    <div class="header-row">
-                        <h1 style="font-size: 2rem;">Clientes</h1>
-                        <button class="btn btn-primary" onclick="openModal('client')">
-                            <i data-lucide="user-plus"></i> Novo Cliente
-                        </button>
-                    </div>
-                    <div class="glass" style="padding: 1.5rem; margin-bottom: 1.5rem;">
-                        <div style="display: flex; gap: 1rem;">
-                            <input type="text" placeholder="Buscar cliente por nome ou CPF..." style="flex: 1;">
-                            <button class="btn glass"><i data-lucide="search"></i></button>
-                        </div>
-                    </div>
-                    <div class="glass" style="padding: 1.5rem;">
-                        <div class="table-container">
-                            <table id="table-clients">
-                                <thead>
-                                    <tr>
-                                        <th>Nome</th>
-                                        <th>Telefone</th>
-                                        <th>E-mail</th>
-                                        <th>Veículos</th>
-                                        <th>Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody> <!-- Os dados vão aparecer via JavaScript --></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Seção de Veículos -->
-                <section id="view-vehicles" class="view" style="display: none;">
-                    <div class="header-row">
-                        <h1 style="font-size: 2rem;">Veículos</h1>
-                        <button class="btn btn-primary" onclick="openModal('vehicle')">
-                            <i data-lucide="plus"></i> Novo Veículo
-                        </button>
-                    </div>
-                    <div class="glass" style="padding: 1.5rem;">
-                        <div class="table-container">
-                            <table id="table-vehicles">
-                                <thead>
-                                    <tr>
-                                        <th>Placa</th>
-                                        <th>Modelo</th>
-                                        <th>Marca</th>
-                                        <th>Proprietário</th>
-                                        <th>Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody> <!-- Os dados vão aparecer via JavaScript --></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Seção de Ordens de Serviço -->
-                <section id="view-orders" class="view" style="display: none;">
-                    <div class="header-row">
-                        <h1 style="font-size: 2rem;">Ordens de Serviço</h1>
-                        <button class="btn btn-primary" onclick="window.location.hash = '#new-order'">
-                            <i data-lucide="plus"></i> Nova Ordem
-                        </button>
-                    </div>
-
-                    <div class="glass" style="padding: 1.5rem;">
-                        <div class="table-container">
-                            <table id="table-orders">
-                                <thead>
-                                    <tr>
-                                        <th>Nº OS</th>
-                                        <th>Cliente</th>
-                                        <th>Veículo</th>
-                                        <th>Descrição</th>
-                                        <th>Status</th>
-                                        <th>Valor</th>
-                                        <th>Data</th>
-                                        <th>Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <!-- Dados via JavaScript -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-                <!-- Seção de Relatórios -->
-                <section id="view-reports" class="view" style="display: none;">
-
-                    <div class="header-row">
-                        <h1 style="font-size: 2rem;">Relatórios do Sistema</h1>
-                    </div>
-
-                    <div class="stats-grid">
-
-                        <div class="glass stat-card">
-                            <div class="stat-info">
-                                <h3 id="report-clientes">0</h3>
-                                <p>Clientes</p>
+                        <div class="glass" style="padding: 1.5rem;">
+                            <h2 style="margin-bottom: 1.5rem; font-size: 1.25rem;">Últimas Ordens de Serviço</h2>
+                            <div class="table-container">
+                                <table id="table-recent-orders">
+                                    <thead>
+                                        <tr>
+                                            <th>Nº OS</th>
+                                            <th>Cliente</th>
+                                            <th>Veículo</th>
+                                            <th>Status</th>
+                                            <th>Valor</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Os dados vão aparecer via JavaScript -->
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
+                    </section>
 
-                        <div class="glass stat-card">
-                            <div class="stat-info">
-                                <h3 id="report-veiculos">0</h3>
-                                <p>Veículos</p>
+                    <!-- Seção de Clientes -->
+                    <section id="view-clients" class="view" style="display: none;">
+                        <div class="header-row">
+                            <h1 style="font-size: 2rem;">Clientes</h1>
+                            <button class="btn btn-primary" onclick="openModal('client')">
+                                <i data-lucide="user-plus"></i> Novo Cliente
+                            </button>
+                        </div>
+                        <div class="glass" style="padding: 1.5rem; margin-bottom: 1.5rem;">
+                            <div class="search-row">
+                                <input type="text" placeholder="Buscar cliente por nome ou CPF..." style="flex: 1;">
+                                <button class="btn glass"><i data-lucide="search"></i></button>
+                            </div>
+                        </div>
+                        <div class="glass" style="padding: 1.5rem;">
+                            <div class="table-container">
+                                <table id="table-clients">
+                                    <thead>
+                                        <tr>
+                                            <th>Nome</th>
+                                            <th>Telefone</th>
+                                            <th>E-mail</th>
+                                            <th>Veículos</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody> <!-- Os dados vão aparecer via JavaScript --></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Seção de Veículos -->
+                    <section id="view-vehicles" class="view" style="display: none;">
+                        <div class="header-row">
+                            <h1 style="font-size: 2rem;">Veículos</h1>
+                            <button class="btn btn-primary" onclick="openModal('vehicle')">
+                                <i data-lucide="plus"></i> Novo Veículo
+                            </button>
+                        </div>
+                        <div class="glass" style="padding: 1.5rem;">
+                            <div class="table-container">
+                                <table id="table-vehicles">
+                                    <thead>
+                                        <tr>
+                                            <th>Placa</th>
+                                            <th>Modelo</th>
+                                            <th>Marca</th>
+                                            <th>Proprietário</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody> <!-- Os dados vão aparecer via JavaScript --></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Seção de Ordens de Serviço -->
+                    <section id="view-orders" class="view" style="display: none;">
+                        <div class="header-row">
+                            <h1 style="font-size: 2rem;">Ordens de Serviço</h1>
+                            <button class="btn btn-primary" onclick="window.location.hash = '#new-order'">
+                                <i data-lucide="plus"></i> Nova Ordem
+                            </button>
+                        </div>
+
+                        <div class="glass" style="padding: 1.5rem;">
+                            <div class="table-container">
+                                <table id="table-orders">
+                                    <thead>
+                                        <tr>
+                                            <th>Nº OS</th>
+                                            <th>Cliente</th>
+                                            <th>Veículo</th>
+                                            <th>Descrição</th>
+                                            <th>Status</th>
+                                            <th>Valor</th>
+                                            <th>Data</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Dados via JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
+                    <!-- Seção de Relatórios -->
+                    <section id="view-reports" class="view" style="display: none;">
+
+                        <div class="header-row">
+                            <h1 style="font-size: 2rem;">Relatórios do Sistema</h1>
+                        </div>
+
+                        <div class="stats-grid">
+
+                            <div class="glass stat-card">
+                                <div class="stat-info">
+                                    <h3 id="report-clientes">0</h3>
+                                    <p>Clientes</p>
+                                </div>
+                            </div>
+
+                            <div class="glass stat-card">
+                                <div class="stat-info">
+                                    <h3 id="report-veiculos">0</h3>
+                                    <p>Veículos</p>
+                                </div>
+                            </div>
+
+                            <div class="glass stat-card">
+                                <div class="stat-info">
+                                    <h3 id="report-abertas">0</h3>
+                                    <p>Ordens Abertas</p>
+                                </div>
+                            </div>
+
+                            <div class="glass stat-card">
+                                <div class="stat-info">
+                                    <h3 id="report-andamento">0</h3>
+                                    <p>Em Andamento</p>
+                                </div>
+                            </div>
+
+                            <div class="glass stat-card">
+                                <div class="stat-info">
+                                    <h3 id="report-concluidas">0</h3>
+                                    <p>Concluídas</p>
+                                </div>
+                            </div>
+
+                            <div class="glass stat-card">
+                                <div class="stat-info">
+                                    <h3 id="report-faturamento">R$ 0,00</h3>
+                                    <p>Faturamento</p>
+                                </div>
+                            </div>
+                            <div class="glass" style="padding: 1.5rem; margin-top: 2rem;">
+                                <h2 style="margin-bottom: 1.5rem;">Status das Ordens de Serviço</h2>
+
+                                <div style="max-width: 450px; margin: auto;">
+                                    <canvas id="chart-status-orders"></canvas>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="glass stat-card">
-                            <div class="stat-info">
-                                <h3 id="report-abertas">0</h3>
-                                <p>Ordens Abertas</p>
-                            </div>
+                    </section>
+                    <!-- Tela de Nova Ordem de Serviço -->
+                    <section id="view-new-order" class="view" style="display: none;">
+
+                        <div class="header-row">
+                            <h1 style="font-size: 2rem;">Nova Ordem de Serviço</h1>
+
+                            <button class="btn glass" onclick="window.location.hash = '#dashboard'">
+                                Cancelar
+                            </button>
                         </div>
 
-                        <div class="glass stat-card">
-                            <div class="stat-info">
-                                <h3 id="report-andamento">0</h3>
-                                <p>Em Andamento</p>
-                            </div>
-                        </div>
+                        <form id="form-order">
 
-                        <div class="glass stat-card">
-                            <div class="stat-info">
-                                <h3 id="report-concluidas">0</h3>
-                                <p>Concluídas</p>
-                            </div>
-                        </div>
+                            <div style="display: grid; grid-template-columns: 1fr 400px; gap: 2rem;">
 
-                        <div class="glass stat-card">
-                            <div class="stat-info">
-                                <h3 id="report-faturamento">R$ 0,00</h3>
-                                <p>Faturamento</p>
-                            </div>
-                        </div>
-                        <div class="glass" style="padding: 1.5rem; margin-top: 2rem;">
-                            <h2 style="margin-bottom: 1.5rem;">Status das Ordens de Serviço</h2>
+                                <div class="glass" style="padding: 2rem;">
 
-                            <div style="max-width: 450px; margin: auto;">
-                                <canvas id="chart-status-orders"></canvas>
-                            </div>
-                        </div>
-                    </div>
+                                    <h3 style="margin-bottom: 1.5rem;">Informações Gerais</h3>
 
-                </section>
-                <!-- Tela de Nova Ordem de Serviço -->
-                <section id="view-new-order" class="view" style="display: none;">
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
 
-                    <div class="header-row">
-                        <h1 style="font-size: 2rem;">Nova Ordem de Serviço</h1>
+                                        <div class="form-group">
+                                            <label>Cliente</label>
 
-                        <button class="btn glass" onclick="window.location.hash = '#dashboard'">
-                            Cancelar
-                        </button>
-                    </div>
+                                            <select id="os-client" name="cliente_id" required>
+                                                <option value="">Selecione um cliente...</option>
+                                            </select>
+                                        </div>
 
-                    <form id="form-order">
+                                        <div class="form-group">
+                                            <label>Veículo</label>
 
-                        <div style="display: grid; grid-template-columns: 1fr 400px; gap: 2rem;">
+                                            <select id="os-vehicle" name="veiculo_id" required>
+                                                <option value="">Selecione um veículo...</option>
+                                            </select>
+                                        </div>
 
-                            <div class="glass" style="padding: 2rem;">
-
-                                <h3 style="margin-bottom: 1.5rem;">Informações Gerais</h3>
-
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
-
-                                    <div class="form-group">
-                                        <label>Cliente</label>
-
-                                        <select id="os-client" name="cliente_id" required>
-                                            <option value="">Selecione um cliente...</option>
-                                        </select>
                                     </div>
 
                                     <div class="form-group">
-                                        <label>Veículo</label>
+                                        <label>Descrição do Problema</label>
 
-                                        <select id="os-vehicle" name="veiculo_id" required>
-                                            <option value="">Selecione um veículo...</option>
-                                        </select>
+                                        <textarea name="descricao" rows="4"
+                                            placeholder="Descreva os sintomas relatados pelo cliente..."
+                                            required></textarea>
                                     </div>
 
                                 </div>
 
-                                <div class="form-group">
-                                    <label>Descrição do Problema</label>
+                                <div class="glass" style="padding: 2rem; height: fit-content;">
 
-                                    <textarea name="descricao" rows="4"
-                                        placeholder="Descreva os sintomas relatados pelo cliente..."
-                                        required></textarea>
+                                    <h3 style="margin-bottom: 1.5rem;">Resumo</h3>
+
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 2rem;">
+                                        <strong>Status Inicial:</strong>
+                                        <strong style="color: var(--warning);">Aberta</strong>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary"
+                                        style="width: 100%; justify-content: center;">
+
+                                        <i data-lucide="save"></i>
+                                        Salvar Ordem
+
+                                    </button>
+
                                 </div>
 
                             </div>
 
-                            <div class="glass" style="padding: 2rem; height: fit-content;">
+                        </form>
 
-                                <h3 style="margin-bottom: 1.5rem;">Resumo</h3>
-
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 2rem;">
-                                    <strong>Status Inicial:</strong>
-                                    <strong style="color: var(--warning);">Aberta</strong>
-                                </div>
-
-                                <button type="submit" class="btn btn-primary"
-                                    style="width: 100%; justify-content: center;">
-
-                                    <i data-lucide="save"></i>
-                                    Salvar Ordem
-
-                                </button>
-
-                            </div>
-
-                        </div>
-
-                    </form>
-
-                </section>
+                    </section>
             </main>
         </div>
     </div>
@@ -468,7 +476,43 @@
                     </div>
                 </form>
             </div>
+            <!-- Modal Adicionar Item na Ordem -->
+            <div id="modal-type-item" class="modal-body" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                    <h2>Adicionar Item na Ordem</h2>
+                    <button class="btn glass" onclick="closeModal()">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
 
+                <form id="form-item-order">
+                    <input type="hidden" name="ordem_id" id="item-order-id">
+
+                    <div class="form-group">
+                        <label>Descrição</label>
+                        <input type="text" name="descricao" placeholder="Ex: Óleo 5W30" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Tipo</label>
+                        <select name="tipo" required>
+                            <option value="">Selecione...</option>
+                            <option value="Peca">Peça</option>
+                            <option value="Mao de obra">Mão de obra</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Valor</label>
+                        <input type="number" name="valor" step="0.01" placeholder="0.00" required>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem;">
+                        <button type="button" class="btn glass" onclick="closeModal()">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Salvar Item</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
     <!-- Modal Detalhes da Ordem -->

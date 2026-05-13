@@ -196,3 +196,44 @@ function showToast(message, type = 'success') {
         toast.remove();
     }, 3000);
 }
+const formItemOrder = document.getElementById('form-item-order');
+
+if (formItemOrder) {
+    formItemOrder.addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        const formData = new FormData(formItemOrder);
+
+        const response = await fetch('http://localhost/Certificadora-de-Competencia-Especifica/backend/routes/cadastrar_item_ordem.php', {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.json();
+
+        showToast(result.message, result.success ? 'success' : 'error');
+
+        if (result.success) {
+            formItemOrder.reset();
+            closeModal();
+
+            renderOrdersData();
+            renderDashboardData();
+        }
+    });
+}
+const menuToggle = document.getElementById('menu-toggle');
+const sidebar = document.querySelector('.sidebar');
+const navLinks = document.querySelectorAll('.nav-link');
+
+if (menuToggle && sidebar) {
+    menuToggle.addEventListener('click', () => {
+        sidebar.classList.toggle('active');
+    });
+
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+        });
+    });
+}

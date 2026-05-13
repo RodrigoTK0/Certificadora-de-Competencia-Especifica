@@ -361,35 +361,9 @@ async function atualizarStatus(id, status) {
         showToast(result.message, 'error');
     }
 }
-async function abrirAdicionarItem(ordemId) {
-    const descricao = prompt('Descrição do item:');
-    if (!descricao) return;
-
-    const tipo = prompt('Tipo do item: Peca ou Mao de obra');
-    if (!tipo) return;
-
-    const valor = prompt('Valor do item:');
-    if (!valor) return;
-
-    const formData = new FormData();
-    formData.append('ordem_id', ordemId);
-    formData.append('descricao', descricao);
-    formData.append('tipo', tipo);
-    formData.append('valor', valor.replace(',', '.'));
-
-    const response = await fetch('http://localhost/Certificadora-de-Competencia-Especifica/backend/routes/cadastrar_item_ordem.php', {
-        method: 'POST',
-        body: formData
-    });
-
-    const result = await response.json();
-
-    showToast(result.message, result.success ? 'success' : 'error');
-
-    if (result.success) {
-        renderOrdersData();
-        renderDashboardData();
-    }
+function abrirAdicionarItem(ordemId) {
+    document.getElementById('item-order-id').value = ordemId;
+    openModal('item');
 }
 
 async function abrirDetalhesOrdem(ordemId) {
