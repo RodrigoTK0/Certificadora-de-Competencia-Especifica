@@ -347,30 +347,34 @@ function renderOrdersTable(orders) {
                         <option value="Concluída" ${o.status === 'Concluída' ? 'selected' : ''}>Concluída</option>
                         <option value="Cancelada" ${o.status === 'Cancelada' ? 'selected' : ''}>Cancelada</option>
                 </select>
-            </td>
-            <td>R$ ${Number(o.valor_total).toFixed(2).replace('.', ',')}</td>
-            <td>${new Date(o.data_criacao).toLocaleDateString('pt-BR')}</td>
-            <td>
-                <button class="btn btn-primary" onclick="abrirAdicionarItem(${o.id})">
-                <button class="btn glass" onclick='abrirEditarOrdem(${JSON.stringify(o)})'>
-                    Editar
-                </button>
-                    + Item
-                </button>
+             </td>
+             <td>R$ ${Number(o.valor_total).toFixed(2).replace('.', ',')}</td>
+                <td>${new Date(o.data_criacao).toLocaleDateString('pt-BR')}</td>
+                
+                <td>
+                    <div class="actions-grid">
+                        <button class="btn btn-sm btn-primary" onclick="abrirAdicionarItem(${o.id})">
+                            + Item
+                        </button>
 
-                <button class="btn glass" onclick="abrirDetalhesOrdem(${o.id})">
-                    Ver Detalhes
-                </button>
+                        <button class="btn btn-sm glass" onclick='abrirEditarOrdem(${JSON.stringify(o)})'>
+                            Editar
+                        </button>
 
-                <button class="btn glass" onclick="imprimirOrdem(${o.id})">
-                    Imprimir
-                </button>
+                        <button class="btn btn-sm glass" onclick="abrirDetalhesOrdem(${o.id})">
+                            Detalhes
+                        </button>
 
-                <button class="btn glass" style="color: var(--danger);" onclick="excluirOrdem(${o.id})">
-                    Excluir
-                </button>
-            </td>
-        </tr>
+                        <button class="btn btn-sm glass" onclick="imprimirOrdem(${o.id})">
+                            Imprimir
+                        </button>
+
+                        <button class="btn btn-sm btn-danger" onclick="excluirOrdem(${o.id})">
+                            Excluir
+                        </button>
+                </div>
+        </td>
+     </tr>
     `).join('');
 
     if (window.lucide) {
@@ -550,7 +554,7 @@ function fecharDetalhesOrdem() {
     document.getElementById('modal-order-details').style.display = 'none';
 }
 async function excluirOrdem(id) {
-    const confirmar = confirm('Tem certeza que deseja excluir esta ordem de serviço?');
+    const confirmar = await confirmarAcao('Tem certeza que deseja excluir esta ordem de serviço?');
 
     if (!confirmar) return;
 
@@ -572,9 +576,11 @@ async function excluirOrdem(id) {
     }
 }
 async function excluirCliente(id) {
-    const confirmar = confirm('Deseja excluir este cliente?');
+    const confirmar = await confirmarAcao(
+    'Tem certeza que deseja excluir este cliente?'
+);
 
-    if (!confirmar) return;
+if (!confirmar) return;
 
     const formData = new FormData();
     formData.append('id', id);
@@ -595,9 +601,11 @@ async function excluirCliente(id) {
 }
 async function excluirVeiculo(id) {
 
-    const confirmar = confirm('Deseja excluir este veículo?');
+    const confirmar = await confirmarAcao(
+    'Tem certeza que deseja excluir este veículo?'
+);
 
-    if (!confirmar) return;
+if (!confirmar) return;
 
     const formData = new FormData();
 
@@ -987,4 +995,40 @@ async function imprimirOrdem(ordemId) {
     `);
 
     janela.document.close();
+}
+function confirmarAcao(mensagem) {
+    return new Promise((resolve) => {
+        const modal = document.createElement('div');
+
+        modal.className = 'confirm-overlay';
+
+        modal.innerHTML = `
+            <div class="confirm-box">
+                <h3>Confirmação</h3>
+                <p>${mensagem}</p>
+
+                <div class="confirm-actions">
+                    <button class="btn glass" id="cancel-confirm">
+                        Cancelar
+                    </button>
+
+                    <button class="btn btn-danger" id="ok-confirm">
+                        Confirmar
+                    </button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+
+        document.getElementById('cancel-confirm').onclick = () => {
+            modal.remove();
+            resolve(false);
+        };
+
+        document.getElementById('ok-confirm').onclick = () => {
+            modal.remove();
+            resolve(true);
+        };
+    });
 }
