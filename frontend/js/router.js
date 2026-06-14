@@ -174,11 +174,13 @@ async function renderVehiclesData() {
                 <td><strong style="background: white; color: black; padding: 2px 6px; border-radius: 4px; font-family: monospace;">${v.placa}</strong></td>
                 <td>${v.modelo}</td>
                 <td>${v.marca}</td>
+                <td>${v.ano || '-'}</td>
                 <td>${v.cliente_nome}</td>
                 <td>
                     <div style="display: flex; gap: 0.5rem;">
 
-                    <button class="btn glass" style="padding: 0.4rem;">
+                    <button class="btn glass" style="padding: 0.4rem;"
+                        onclick='abrirEditarVeiculo(${JSON.stringify(v)})'>
                         <i data-lucide="edit" style="width: 16px;"></i>
                     </button>
 
@@ -504,7 +506,7 @@ function abrirEditarCliente(cliente) {
     document.getElementById('client-name').value = cliente.nome || '';
     document.getElementById('client-phone').value = cliente.telefone || '';
     document.getElementById('client-email').value = cliente.email || '';
-    
+
     const documentoInput = document.getElementById('client-document');
     if (documentoInput) {
         documentoInput.value = cliente.documento || '';
@@ -525,4 +527,34 @@ function abrirEditarCliente(cliente) {
         button.textContent = 'Salvar alterações';
     }
 
+}
+async function abrirEditarVeiculo(veiculo) {
+    openModal('vehicle');
+
+    await carregarClientesNoSelectVeiculo();
+
+    document.getElementById('vehicle-id').value = veiculo.id;
+    document.getElementById('vehicle-plate').value = veiculo.placa || '';
+    document.getElementById('vehicle-brand').value = veiculo.marca || '';
+    document.getElementById('vehicle-model').value = veiculo.modelo || '';
+
+    const anoInput = document.getElementById('vehicle-year');
+    if (anoInput) {
+        anoInput.value = veiculo.ano || '';
+    }
+
+    const clienteSelect = document.getElementById('vehicle-client');
+    if (clienteSelect) {
+        clienteSelect.value = veiculo.cliente_id || '';
+    }
+
+    const title = document.querySelector('#modal-type-vehicle h2');
+    if (title) {
+        title.textContent = 'Editar Veículo';
+    }
+
+    const button = document.querySelector('#form-vehicle button[type="submit"]');
+    if (button) {
+        button.textContent = 'Salvar alterações';
+    }
 }

@@ -206,7 +206,11 @@ if (formVehicle) {
 
         const formData = new FormData(formVehicle);
 
-        const result = await apiRequest('cadastrar_veiculo.php', {
+        const veiculoId = formVehicle.querySelector('[name="id"]')?.value;
+
+        const endpoint = veiculoId ? 'atualizar_veiculo.php' : 'cadastrar_veiculo.php';
+
+        const result = await apiRequest(endpoint, {
             method: 'POST',
             body: formData
         });
@@ -216,6 +220,7 @@ if (formVehicle) {
         showToast(result.message, result.success ? 'success' : 'error');
 
         if (result.success) {
+            formVehicle.querySelector('[name="id"]').value = '';
             formVehicle.reset();
             closeModal();
 
