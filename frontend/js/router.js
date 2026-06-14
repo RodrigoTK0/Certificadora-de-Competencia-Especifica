@@ -66,10 +66,10 @@ async function renderDashboardData() {
     if (!tbody) return;
 
     try {
-        const response = await fetch('http://localhost/Certificadora-de-Competencia-Especifica/backend/routes/ordens.php');
-        const orders = await response.json();
-        const dashboardResponse = await fetch('http://localhost/Certificadora-de-Competencia-Especifica/backend/routes/dashboard.php');
-        const dashboardData = await dashboardResponse.json();
+        const orders = await apiRequest('ordens.php');
+        const dashboardData = await apiRequest('dashboard.php');
+
+        if (!orders || !dashboardData) return;
 
         // Atualiza os cards do topo
         document.querySelector('#card-open-orders .card-value').textContent = dashboardData.ordens_abertas;
@@ -117,8 +117,9 @@ async function renderClientsData() {
     if (!tbody) return;
 
     try {
-        const response = await fetch('http://localhost/Certificadora-de-Competencia-Especifica/backend/routes/clientes.php');
-        const clients = await response.json();
+        const clients = await apiRequest('clientes.php');
+
+        if (!clients) return;
 
         tbody.innerHTML = clients.map(c => `
             <tr>
@@ -162,8 +163,9 @@ async function renderVehiclesData() {
     if (!tbody) return;
 
     try {
-        const response = await fetch('http://localhost/Certificadora-de-Competencia-Especifica/backend/routes/veiculos.php');
-        const vehicles = await response.json();
+        const vehicles = await apiRequest('veiculos.php');
+
+        if (!vehicles) return;
 
         tbody.innerHTML = vehicles.map(v => `
             <tr>
@@ -206,8 +208,9 @@ async function renderOrdersData() {
     if (!tbody) return;
 
     try {
-        const response = await fetch('http://localhost/Certificadora-de-Competencia-Especifica/backend/routes/ordens.php');
-        const orders = await response.json();
+        const orders = await apiRequest('ordens.php');
+
+        if (!orders) return;
 
         tbody.innerHTML = orders.map(o => {
             return `
@@ -256,11 +259,9 @@ let statusChart = null;
 
 async function renderReportsData() {
     try {
-        const response = await fetch(
-            'http://localhost/Certificadora-de-Competencia-Especifica/backend/routes/relatorios.php'
-        );
+        const data = await apiRequest('relatorios.php');
 
-        const data = await response.json();
+        if (!data) return;
 
         document.getElementById('report-clientes').textContent = data.total_clientes;
         document.getElementById('report-veiculos').textContent = data.total_veiculos;
@@ -319,12 +320,12 @@ window.addEventListener('load', () => {
 
             const formData = new FormData(loginForm);
 
-            const response = await fetch('http://localhost/Certificadora-de-Competencia-Especifica/backend/routes/login.php', {
+            const result = await apiRequest('login.php', {
                 method: 'POST',
                 body: formData
             });
 
-            const result = await response.json();
+            if (!result) return;
 
             showToast(result.message, result.success ? 'success' : 'error');
 
@@ -344,15 +345,12 @@ async function atualizarStatus(id, status) {
     formData.append('id', id);
     formData.append('status', status);
 
-    const response = await fetch(
-        'http://localhost/Certificadora-de-Competencia-Especifica/backend/routes/atualizar_status_ordem.php',
-        {
-            method: 'POST',
-            body: formData
-        }
-    );
+    const result = await apiRequest('atualizar_status_ordem.php', {
+        method: 'POST',
+        body: formData
+    });
 
-    const result = await response.json();
+    if (!result) return;
 
     if (result.success) {
         renderOrdersData();
@@ -367,8 +365,9 @@ function abrirAdicionarItem(ordemId) {
 }
 
 async function abrirDetalhesOrdem(ordemId) {
-    const response = await fetch(`http://localhost/Certificadora-de-Competencia-Especifica/backend/routes/listar_itens_ordem.php?ordem_id=${ordemId}`);
-    const itens = await response.json();
+    const itens = await apiRequest(`listar_itens_ordem.php?ordem_id=${ordemId}`);
+
+    if (!itens) return;
 
     const modal = document.getElementById('modal-order-details');
     const title = document.getElementById('order-details-title');
@@ -436,12 +435,12 @@ async function excluirOrdem(id) {
     const formData = new FormData();
     formData.append('id', id);
 
-    const response = await fetch('http://localhost/Certificadora-de-Competencia-Especifica/backend/routes/excluir_ordem.php', {
+    const result = await apiRequest('excluir_ordem.php', {
         method: 'POST',
         body: formData
     });
 
-    const result = await response.json();
+    if (!result) return;
 
     showToast(result.message, result.success ? 'success' : 'error');
 
@@ -451,24 +450,19 @@ async function excluirOrdem(id) {
     }
 }
 async function excluirCliente(id) {
-
     const confirmar = confirm('Deseja excluir este cliente?');
 
     if (!confirmar) return;
 
     const formData = new FormData();
-
     formData.append('id', id);
 
-    const response = await fetch(
-        'http://localhost/Certificadora-de-Competencia-Especifica/backend/routes/excluir_cliente.php',
-        {
-            method: 'POST',
-            body: formData
-        }
-    );
+    const result = await apiRequest('excluir_cliente.php', {
+        method: 'POST',
+        body: formData
+    });
 
-    const result = await response.json();
+    if (!result) return;
 
     showToast(result.message, result.success ? 'success' : 'error');
 
@@ -487,15 +481,12 @@ async function excluirVeiculo(id) {
 
     formData.append('id', id);
 
-    const response = await fetch(
-        'http://localhost/Certificadora-de-Competencia-Especifica/backend/routes/excluir_veiculo.php',
-        {
-            method: 'POST',
-            body: formData
-        }
-    );
+    const result = await apiRequest('excluir_veiculo.php', {
+        method: 'POST',
+        body: formData
+    });
 
-    const result = await response.json();
+    if (!result) return;
 
     showToast(result.message, result.success ? 'success' : 'error');
 
