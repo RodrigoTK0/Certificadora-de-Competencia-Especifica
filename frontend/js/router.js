@@ -258,8 +258,10 @@ function renderVehiclesTable(vehicles) {
         lucide.createIcons();
     }
 }
+let ordensCache = [];
 async function renderOrdersData() {
     const tbody = document.querySelector('#table-orders tbody');
+
     if (!tbody) return;
 
     try {
@@ -267,47 +269,67 @@ async function renderOrdersData() {
 
         if (!orders) return;
 
-        tbody.innerHTML = orders.map(o => {
-            return `
-                <tr>
-                    <td><strong>#${String(o.id).padStart(3, '0')}</strong></td>
-                    <td>${o.cliente_nome}</td>
-                    <td>${o.veiculo_marca} ${o.veiculo_modelo}</td>
-                    <td>${o.descricao}</td>
-                    <td>
-                        <select onchange="atualizarStatus(${o.id}, this.value)">
-                            <option value="Aberta" ${o.status === 'Aberta' ? 'selected' : ''}>Aberta</option>
-                            <option value="Em andamento" ${o.status === 'Em andamento' ? 'selected' : ''}>Em andamento</option>
-                            <option value="Concluída" ${o.status === 'Concluída' ? 'selected' : ''}>Concluída</option>
-                        </select>
-                    </td>
-                    <td>R$ ${Number(o.valor_total).toFixed(2).replace('.', ',')}</td>
-                    <td>${new Date(o.data_criacao).toLocaleDateString('pt-BR')}</td>
-                    <td>
-                        <button class="btn btn-primary" onclick="abrirAdicionarItem(${o.id})">
-                             + Item
-                        </button>
+        ordensCache = orders;
 
-                        <button class="btn glass" onclick="abrirDetalhesOrdem(${o.id})">
-                            Ver Detalhes
-                        </button>
-                        <button class="btn glass" style="color: var(--danger);" onclick="excluirOrdem(${o.id})">
-                             Excluir
-                        </button>
-                    </td>
-                </tr>
-            `;
-        }).join('');
-
-        if (window.lucide) lucide.createIcons();
+        renderOrdersTable(ordensCache);
 
     } catch (error) {
         console.error('Erro ao carregar ordens:', error);
+
         tbody.innerHTML = `
             <tr>
                 <td colspan="8">Erro ao carregar ordens de serviço.</td>
             </tr>
         `;
+    }
+}
+function renderOrdersTable(orders) {
+    const tbody = document.querySelector('#table-orders tbody');
+
+    if (!tbody) return;
+
+    if (orders.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="8">Nenhuma ordem encontrada.</td>
+            </tr>
+        `;
+        return;
+    }
+
+    tbody.innerHTML = orders.map(o => `
+        <tr>
+            <td><strong>#${String(o.id).padStart(3, '0')}</strong></td>
+            <td>${o.cliente_nome}</td>
+            <td>${o.veiculo_marca} ${o.veiculo_modelo}</td>
+            <td>${o.descricao}</td>
+            <td>
+                <select onchange="atualizarStatus(${o.id}, this.value)">
+                    <option value="Aberta" ${o.status === 'Aberta' ? 'selected' : ''}>Aberta</option>
+                    <option value="Em andamento" ${o.status === 'Em andamento' ? 'selected' : ''}>Em andamento</option>
+                    <option value="Concluída" ${o.status === 'Concluída' ? 'selected' : ''}>Concluída</option>
+                </select>
+            </td>
+            <td>R$ ${Number(o.valor_total).toFixed(2).replace('.', ',')}</td>
+            <td>${new Date(o.data_criacao).toLocaleDateString('pt-BR')}</td>
+            <td>
+                <button class="btn btn-primary" onclick="abrirAdicionarItem(${o.id})">
+                    + Item
+                </button>
+
+                <button class="btn glass" onclick="abrirDetalhesOrdem(${o.id})">
+                    Ver Detalhes
+                </button>
+
+                <button class="btn glass" style="color: var(--danger);" onclick="excluirOrdem(${o.id})">
+                    Excluir
+                </button>
+            </td>
+        </tr>
+    `).join('');
+
+    if (window.lucide) {
+        lucide.createIcons();
     }
 }
 let statusChart = null;
@@ -657,6 +679,33 @@ document.addEventListener('input', function (event) {
         });
 
         renderVehiclesTable(filtrados);
+    }
+
+});
+document.addEventListener('input', function (event) {
+
+    if (event.target.id === 'search-order') {
+
+        const termo = event.target.value
+            .toLowerCase()
+            .trim();
+
+        const filtrados = ordensCache.filter(ordem => {
+
+            const numero = String(ordem.id || '').padStart(3, '0');
+            const cliente = (ordem.cliente_nome || '').toLowerCase();
+            const veiculo = `${ordem.veiculo_marca || ''} ${ordem.veiculo_modelo || ''}`.toLowerCase();
+            const status = (ordem.status || '').toLowerCase();
+            const descricao = (ordem.descricao || '').toLowerCase();
+
+            return numero.includes(termo)
+                || cliente.includes(termo)
+                || veiculo.includes(termo)
+                || status.includes(termo)
+                || descricao.includes(termo);
+        });
+
+        renderOrdersTable(filtrados);
     }
 
 });
