@@ -81,8 +81,33 @@ async function renderDashboardData() {
         tbody.innerHTML = orders.map(o => {
             let badge = 'warning';
 
-            if (o.status === 'Em andamento') badge = 'info';
-            if (o.status === 'Concluída' || o.status === 'Concluído') badge = 'success';
+
+            switch (o.status) {
+
+                case 'Aberta':
+                    badge = 'warning';
+                    break;
+
+                case 'Em andamento':
+                    badge = 'info';
+                    break;
+
+                case 'Aguardando peças':
+                    badge = 'orange';
+                    break;
+
+                case 'Pronta para retirada':
+                    badge = 'purple';
+                    break;
+
+                case 'Concluída':
+                    badge = 'success';
+                    break;
+
+                case 'Cancelada':
+                    badge = 'danger';
+                    break;
+            }
 
             return `
                 <tr>
@@ -306,8 +331,11 @@ function renderOrdersTable(orders) {
             <td>
                 <select onchange="atualizarStatus(${o.id}, this.value)">
                     <option value="Aberta" ${o.status === 'Aberta' ? 'selected' : ''}>Aberta</option>
-                    <option value="Em andamento" ${o.status === 'Em andamento' ? 'selected' : ''}>Em andamento</option>
-                    <option value="Concluída" ${o.status === 'Concluída' ? 'selected' : ''}>Concluída</option>
+                        <option value="Em andamento" ${o.status === 'Em andamento' ? 'selected' : ''}>Em andamento</option>
+                        <option value="Aguardando peças" ${o.status === 'Aguardando peças' ? 'selected' : ''}>Aguardando peças</option>
+                        <option value="Pronta para retirada" ${o.status === 'Pronta para retirada' ? 'selected' : ''}>Pronta para retirada</option>
+                        <option value="Concluída" ${o.status === 'Concluída' ? 'selected' : ''}>Concluída</option>
+                        <option value="Cancelada" ${o.status === 'Cancelada' ? 'selected' : ''}>Cancelada</option>
                 </select>
             </td>
             <td>R$ ${Number(o.valor_total).toFixed(2).replace('.', ',')}</td>
