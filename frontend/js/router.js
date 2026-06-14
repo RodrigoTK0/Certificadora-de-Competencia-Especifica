@@ -352,6 +352,10 @@ function renderOrdersTable(orders) {
                     Ver Detalhes
                 </button>
 
+                <button class="btn glass" onclick="imprimirOrdem(${o.id})">
+                    Imprimir
+                </button>
+
                 <button class="btn glass" style="color: var(--danger);" onclick="excluirOrdem(${o.id})">
                     Excluir
                 </button>
@@ -760,4 +764,217 @@ async function abrirEditarOrdem(ordem) {
 
         if (window.lucide) lucide.createIcons();
     }, 100);
+}
+async function imprimirOrdem(ordemId) {
+    const ordens = await apiRequest('ordens.php');
+    const itens = await apiRequest(`listar_itens_ordem.php?ordem_id=${ordemId}`);
+
+    if (!ordens || !itens) return;
+
+    const ordem = ordens.find(o => String(o.id) === String(ordemId));
+
+    if (!ordem) {
+        showToast('Ordem não encontrada.', 'error');
+        return;
+    }
+
+    const itensHtml = itens.length > 0
+        ? itens.map(item => `
+            <tr>
+                <td>${item.tipo}</td>
+                <td>${item.descricao}</td>
+                <td>R$ ${Number(item.valor).toFixed(2).replace('.', ',')}</td>
+            </tr>
+        `).join('')
+        : `
+            <tr>
+                <td colspan="3">Nenhum item cadastrado nesta ordem.</td>
+            </tr>
+        `;
+
+    const janela = window.open('', '_blank');
+
+    janela.document.write(`
+        <!DOCTYPE html>
+        <html lang="pt-br">
+        <head>
+            <meta charset="UTF-8">
+            <title>Ordem de Serviço #${String(ordem.id).padStart(3, '0')}</title>
+
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    color: #111827;
+                    margin: 40px;
+                }
+
+                .header {
+                    border-bottom: 2px solid #111827;
+                    padding-bottom: 15px;
+                    margin-bottom: 25px;
+                }
+
+                h1 {
+                    margin: 0;
+                    font-size: 26px;
+                }
+
+                .subtitle {
+                    color: #6b7280;
+                    margin-top: 5px;
+                }
+
+                .section {
+                    margin-bottom: 25px;
+                }
+
+                .grid {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 12px;
+                }
+
+                .box {
+                    border: 1px solid #d1d5db;
+                    padding: 12px;
+                    border-radius: 8px;
+                }
+
+                .label {
+                    font-size: 12px;
+                    color: #6b7280;
+                    margin-bottom: 4px;
+                }
+
+                .value {
+                    font-weight: bold;
+                }
+
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-top: 10px;
+                }
+
+                th, td {
+                    border: 1px solid #d1d5db;
+                    padding: 10px;
+                    text-align: left;
+                }
+
+                th {
+                    background: #f3f4f6;
+                }
+
+                .total {
+                    text-align: right;
+                    margin-top: 20px;
+                    font-size: 20px;
+                    font-weight: bold;
+                }
+
+                .footer {
+                    margin-top: 50px;
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 60px;
+                }
+
+                .signature {
+                    border-top: 1px solid #111827;
+                    text-align: center;
+                    padding-top: 8px;
+                    font-size: 14px;
+                }
+
+                @media print {
+                    button {
+                        display: none;
+                    }
+                }
+            </style>
+        </head>
+
+        <body>
+            <button onclick="window.print()" style="margin-bottom: 20px; padding: 10px 16px;">
+                Imprimir
+            </button>
+
+            <div class="header">
+                <h1>Sistema O.S. - Ordem de Serviço</h1>
+                <div class="subtitle">Oficina Mecânica</div>
+            </div>
+
+            <div class="section">
+                <h2>Dados da Ordem</h2>
+
+                <div class="grid">
+                    <div class="box">
+                        <div class="label">Número da OS</div>
+                        <div class="value">#${String(ordem.id).padStart(3, '0')}</div>
+                    </div>
+
+                    <div class="box">
+                        <div class="label">Status</div>
+                        <div class="value">${ordem.status}</div>
+                    </div>
+
+                    <div class="box">
+                        <div class="label">Data de criação</div>
+                        <div class="value">${new Date(ordem.data_criacao).toLocaleDateString('pt-BR')}</div>
+                    </div>
+
+                    <div class="box">
+                        <div class="label">Cliente</div>
+                        <div class="value">${ordem.cliente_nome}</div>
+                    </div>
+
+                    <div class="box">
+                        <div class="label">Veículo</div>
+                        <div class="value">${ordem.veiculo_marca} ${ordem.veiculo_modelo}</div>
+                    </div>
+
+                    <div class="box">
+                        <div class="label">Placa</div>
+                        <div class="value">${ordem.veiculo_placa || '-'}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Descrição do Problema</h2>
+                <div class="box">${ordem.descricao}</div>
+            </div>
+
+            <div class="section">
+                <h2>Itens da Ordem</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tipo</th>
+                            <th>Descrição</th>
+                            <th>Valor</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        ${itensHtml}
+                    </tbody>
+                </table>
+
+                <div class="total">
+                    Total: R$ ${Number(ordem.valor_total).toFixed(2).replace('.', ',')}
+                </div>
+            </div>
+
+            <div class="footer">
+                <div class="signature">Assinatura do Cliente</div>
+                <div class="signature">Responsável da Oficina</div>
+            </div>
+        </body>
+        </html>
+    `);
+
+    janela.document.close();
 }
