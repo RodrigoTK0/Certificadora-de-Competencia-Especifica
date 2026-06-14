@@ -1,79 +1,102 @@
-// Lógica Geral do App - Controla interações globais como Modais
+// Lógica Geral do App - Modais, formulários e requisições
 
-// Abre a janela modal correta baseada no tipo (client ou vehicle)
+const API_BASE = '/Certificadora-de-Competencia-Especifica/backend/routes';
+
+async function apiRequest(endpoint, options = {}) {
+    try {
+        const response = await fetch(`${API_BASE}/${endpoint}`, options);
+
+        if (!response.ok) {
+            throw new Error(`Erro HTTP: ${response.status}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Erro na comunicação com a API:', error);
+        showToast('Erro ao comunicar com o servidor.', 'error');
+        return null;
+    }
+}
+
 function openModal(type) {
     const container = document.getElementById('modal-container');
 
-    // Esconde todos os corpos de modal primeiro
-    document.querySelectorAll('.modal-body').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('.modal-body').forEach(el => {
+        el.style.display = 'none';
+    });
 
-    // Mostra o modal específico solicitado
     const targetModal = document.getElementById(`modal-type-${type}`);
+
     if (targetModal) {
         targetModal.style.display = 'block';
         container.style.display = 'flex';
 
-        // Atualiza os ícones dentro do modal
         if (window.lucide) lucide.createIcons();
 
         if (type === 'vehicle') {
             carregarClientesNoSelectVeiculo();
         }
+
+        if (type === 'order') {
+            carregarClientesOS();
+            carregarVeiculosOS();
+        }
     }
 }
 
-// Fecha a janela modal
 function closeModal() {
-    document.getElementById('modal-container').style.display = 'none';
+    const container = document.getElementById('modal-container');
+
+    if (container) {
+        container.style.display = 'none';
+    }
 }
 
-// Fecha se clicar fora da área branca do modal
 window.onclick = function (event) {
     const container = document.getElementById('modal-container');
-    if (event.target == container) {
+
+    if (event.target === container) {
         closeModal();
     }
-}
+};
 
-// Estado global simples do app
 const AppState = {
-    user: { name: 'Jose Garcia', role: 'Admin' },
+    user: null,
     orders: [],
-    clients: []
+    clients: [],
+    vehicles: []
 };
 
 console.log('SOS pronto para uso! 🚀');
 
-const formClient = document.getElementById('form-client');
+function showToast(message, type = 'success') {
+    const container = document.getElementById('toast-container');
 
-if (formClient) {
-    formClient.addEventListener('submit', async function (event) {
-        event.preventDefault();
+    if (!container) {
+        alert(message);
+        return;
+    }
 
-        const formData = new FormData(formClient);
+    const toast = document.createElement('div');
 
-        const response = await fetch('http://localhost/Certificadora-de-Competencia-Especifica/backend/routes/cadastrar_cliente.php', {
-            method: 'POST',
-            body: formData
-        });
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
 
-        const result = await response.json();
+    container.appendChild(toast);
 
-        showToast(result.message);
-
-        if (result.success) {
-            formClient.reset();
-            closeModal();
-            renderClientsData();
-        }
-    });
+    setTimeout(() => {
+        toast.remove();
+    }, 3000);
 }
+
 async function carregarClientesNoSelectVeiculo() {
     const select = document.getElementById('vehicle-client');
+
     if (!select) return;
 
-    const response = await fetch('http://localhost/Certificadora-de-Competencia-Especifica/backend/routes/clientes.php');
-    const clientes = await response.json();
+    const clientes = await apiRequest('clientes.php');
+
+    if (!clientes) return;
 
     select.innerHTML = '<option value="">Selecione...</option>';
 
@@ -84,38 +107,14 @@ async function carregarClientesNoSelectVeiculo() {
     });
 }
 
-const formVehicle = document.getElementById('form-vehicle');
-
-if (formVehicle) {
-    formVehicle.addEventListener('submit', async function (event) {
-        event.preventDefault();
-
-        const formData = new FormData(formVehicle);
-
-        const response = await fetch('http://localhost/Certificadora-de-Competencia-Especifica/backend/routes/cadastrar_veiculo.php', {
-            method: 'POST',
-            body: formData
-        });
-
-        const result = await response.json();
-
-        showToast(result.message);
-
-        if (result.success) {
-            formVehicle.reset();
-            closeModal();
-            renderVehiclesData();
-        }
-    });
-}
 async function carregarClientesOS() {
     const select = document.getElementById('os-client');
 
     if (!select) return;
 
-    const response = await fetch('http://localhost/Certificadora-de-Competencia-Especifica/backend/routes/clientes.php');
+    const clientes = await apiRequest('clientes.php');
 
-    const clientes = await response.json();
+    if (!clientes) return;
 
     select.innerHTML = '<option value="">Selecione um cliente...</option>';
 
@@ -133,9 +132,9 @@ async function carregarVeiculosOS() {
 
     if (!select) return;
 
-    const response = await fetch('http://localhost/Certificadora-de-Competencia-Especifica/backend/routes/veiculos.php');
+    const veiculos = await apiRequest('veiculos.php');
 
-    const veiculos = await response.json();
+    if (!veiculos) return;
 
     select.innerHTML = '<option value="">Selecione um veículo...</option>';
 
@@ -148,68 +147,142 @@ async function carregarVeiculosOS() {
     });
 }
 
-const formOrder = document.getElementById('form-order');
+// Cadastro de cliente
+const formClient = document.getElementById('form-client');
 
-if (formOrder) {
-
-    carregarClientesOS();
-    carregarVeiculosOS();
-
-    formOrder.addEventListener('submit', async function(event) {
-
+if (formClient) {
+    formClient.addEventListener('submit', async function (event) {
         event.preventDefault();
 
-        const formData = new FormData(formOrder);
+        const nome = formClient.querySelector('[name="nome"]')?.value.trim();
 
-        const response = await fetch('http://localhost/Certificadora-de-Competencia-Especifica/backend/routes/cadastrar_ordem.php', {
+        if (!nome) {
+            showToast('Informe o nome do cliente.', 'error');
+            return;
+        }
+
+        const formData = new FormData(formClient);
+
+        const result = await apiRequest('cadastrar_cliente.php', {
             method: 'POST',
             body: formData
         });
 
-        const result = await response.json();
+        if (!result) return;
 
-      showToast(result.message);
+        showToast(result.message, result.success ? 'success' : 'error');
 
         if (result.success) {
+            formClient.reset();
+            closeModal();
 
-            formOrder.reset();
-
-            window.location.hash = '#dashboard';
-
-            renderDashboardData();
+            if (typeof renderClientsData === 'function') renderClientsData();
+            if (typeof renderDashboardData === 'function') renderDashboardData();
         }
     });
 }
-function showToast(message, type = 'success') {
 
-    const container = document.getElementById('toast-container');
+// Cadastro de veículo
+const formVehicle = document.getElementById('form-vehicle');
 
-    const toast = document.createElement('div');
+if (formVehicle) {
+    formVehicle.addEventListener('submit', async function (event) {
+        event.preventDefault();
 
-    toast.className = `toast toast-${type}`;
+        const placa = formVehicle.querySelector('[name="placa"]')?.value.trim();
+        const modelo = formVehicle.querySelector('[name="modelo"]')?.value.trim();
+        const marca = formVehicle.querySelector('[name="marca"]')?.value.trim();
+        const clienteId = formVehicle.querySelector('[name="cliente_id"]')?.value;
 
-    toast.textContent = message;
+        if (!placa || !modelo || !marca || !clienteId) {
+            showToast('Preencha todos os dados do veículo.', 'error');
+            return;
+        }
 
-    container.appendChild(toast);
+        const formData = new FormData(formVehicle);
 
-    setTimeout(() => {
-        toast.remove();
-    }, 3000);
+        const result = await apiRequest('cadastrar_veiculo.php', {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!result) return;
+
+        showToast(result.message, result.success ? 'success' : 'error');
+
+        if (result.success) {
+            formVehicle.reset();
+            closeModal();
+
+            if (typeof renderVehiclesData === 'function') renderVehiclesData();
+            if (typeof renderDashboardData === 'function') renderDashboardData();
+        }
+    });
 }
+
+// Cadastro de ordem de serviço
+const formOrder = document.getElementById('form-order');
+
+if (formOrder) {
+    carregarClientesOS();
+    carregarVeiculosOS();
+
+    formOrder.addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        const clienteId = formOrder.querySelector('[name="cliente_id"]')?.value;
+        const veiculoId = formOrder.querySelector('[name="veiculo_id"]')?.value;
+        const descricao = formOrder.querySelector('[name="descricao"]')?.value.trim();
+
+        if (!clienteId || !veiculoId || !descricao) {
+            showToast('Preencha cliente, veículo e descrição da ordem.', 'error');
+            return;
+        }
+
+        const formData = new FormData(formOrder);
+
+        const result = await apiRequest('cadastrar_ordem.php', {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!result) return;
+
+        showToast(result.message, result.success ? 'success' : 'error');
+
+        if (result.success) {
+            formOrder.reset();
+            window.location.hash = '#dashboard';
+
+            if (typeof renderDashboardData === 'function') renderDashboardData();
+            if (typeof renderOrdersData === 'function') renderOrdersData();
+        }
+    });
+}
+
+// Cadastro de item da ordem
 const formItemOrder = document.getElementById('form-item-order');
 
 if (formItemOrder) {
     formItemOrder.addEventListener('submit', async function (event) {
         event.preventDefault();
 
+        const descricao = formItemOrder.querySelector('[name="descricao"]')?.value.trim();
+        const valor = formItemOrder.querySelector('[name="valor"]')?.value;
+
+        if (!descricao || !valor || Number(valor) <= 0) {
+            showToast('Informe descrição e valor válido para o item.', 'error');
+            return;
+        }
+
         const formData = new FormData(formItemOrder);
 
-        const response = await fetch('http://localhost/Certificadora-de-Competencia-Especifica/backend/routes/cadastrar_item_ordem.php', {
+        const result = await apiRequest('cadastrar_item_ordem.php', {
             method: 'POST',
             body: formData
         });
 
-        const result = await response.json();
+        if (!result) return;
 
         showToast(result.message, result.success ? 'success' : 'error');
 
@@ -217,11 +290,14 @@ if (formItemOrder) {
             formItemOrder.reset();
             closeModal();
 
-            renderOrdersData();
-            renderDashboardData();
+            if (typeof renderOrdersData === 'function') renderOrdersData();
+            if (typeof renderDashboardData === 'function') renderDashboardData();
+            if (typeof renderReportsData === 'function') renderReportsData();
         }
     });
 }
+
+// Menu mobile
 const menuToggle = document.getElementById('menu-toggle');
 const sidebar = document.querySelector('.sidebar');
 const navLinks = document.querySelectorAll('.nav-link');
