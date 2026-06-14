@@ -183,9 +183,10 @@ function renderClientsTable(clients) {
         lucide.createIcons();
     }
 }
-
+let veiculosCache = [];
 async function renderVehiclesData() {
     const tbody = document.querySelector('#table-vehicles tbody');
+
     if (!tbody) return;
 
     try {
@@ -193,15 +194,49 @@ async function renderVehiclesData() {
 
         if (!vehicles) return;
 
-        tbody.innerHTML = vehicles.map(v => `
+        veiculosCache = vehicles;
+
+        renderVehiclesTable(veiculosCache);
+
+    } catch (error) {
+        console.error('Erro ao carregar veículos:', error);
+
+        tbody.innerHTML = `
             <tr>
-                <td><strong style="background: white; color: black; padding: 2px 6px; border-radius: 4px; font-family: monospace;">${v.placa}</strong></td>
-                <td>${v.modelo}</td>
-                <td>${v.marca}</td>
-                <td>${v.ano || '-'}</td>
-                <td>${v.cliente_nome}</td>
-                <td>
-                    <div style="display: flex; gap: 0.5rem;">
+                <td colspan="6">Erro ao carregar veículos.</td>
+            </tr>
+        `;
+    }
+}
+function renderVehiclesTable(vehicles) {
+    const tbody = document.querySelector('#table-vehicles tbody');
+
+    if (!tbody) return;
+
+    if (vehicles.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="6">Nenhum veículo encontrado.</td>
+            </tr>
+        `;
+        return;
+    }
+
+    tbody.innerHTML = vehicles.map(v => `
+        <tr>
+            <td>
+                <strong style="background: white; color: black; padding: 2px 6px; border-radius: 4px; font-family: monospace;">
+                    ${v.placa}
+                </strong>
+            </td>
+
+            <td>${v.modelo}</td>
+            <td>${v.marca}</td>
+            <td>${v.ano || '-'}</td>
+            <td>${v.cliente_nome}</td>
+
+            <td>
+                <div style="display: flex; gap: 0.5rem;">
 
                     <button class="btn glass" style="padding: 0.4rem;"
                         onclick='abrirEditarVeiculo(${JSON.stringify(v)})'>
@@ -209,26 +244,18 @@ async function renderVehiclesData() {
                     </button>
 
                     <button class="btn glass"
-                         style="padding: 0.4rem; color: var(--danger);"
-                            onclick="excluirVeiculo(${v.id})">
-
-                                <i data-lucide="trash-2" style="width: 16px;"></i>
+                        style="padding: 0.4rem; color: var(--danger);"
+                        onclick="excluirVeiculo(${v.id})">
+                        <i data-lucide="trash-2" style="width: 16px;"></i>
                     </button>
 
-</div>
-                </td>
-            </tr>
-        `).join('');
+                </div>
+            </td>
+        </tr>
+    `).join('');
 
-        if (window.lucide) lucide.createIcons();
-
-    } catch (error) {
-        console.error('Erro ao carregar veículos:', error);
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="5">Erro ao carregar veículos.</td>
-            </tr>
-        `;
+    if (window.lucide) {
+        lucide.createIcons();
     }
 }
 async function renderOrdersData() {
@@ -605,6 +632,31 @@ document.addEventListener('input', function (event) {
         });
 
         renderClientsTable(filtrados);
+    }
+
+});
+document.addEventListener('input', function (event) {
+
+    if (event.target.id === 'search-vehicle') {
+
+        const termo = event.target.value
+            .toLowerCase()
+            .trim();
+
+        const filtrados = veiculosCache.filter(veiculo => {
+
+            const placa = (veiculo.placa || '').toLowerCase();
+            const modelo = (veiculo.modelo || '').toLowerCase();
+            const marca = (veiculo.marca || '').toLowerCase();
+            const proprietario = (veiculo.cliente_nome || '').toLowerCase();
+
+            return placa.includes(termo)
+                || modelo.includes(termo)
+                || marca.includes(termo)
+                || proprietario.includes(termo);
+        });
+
+        renderVehiclesTable(filtrados);
     }
 
 });
