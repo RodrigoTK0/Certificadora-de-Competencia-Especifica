@@ -330,6 +330,7 @@
                         </div>
 
                         <form id="form-order">
+                            <input type="hidden" id="order-id" name="id">
 
                             <div style="display: grid; grid-template-columns: 1fr 400px; gap: 2rem;">
 
@@ -360,7 +361,7 @@
                                     <div class="form-group">
                                         <label>Descrição do Problema</label>
 
-                                        <textarea name="descricao" rows="4"
+                                        <textarea id="order-description" name="descricao" rows="4"
                                             placeholder="Descreva os sintomas relatados pelo cliente..."
                                             required></textarea>
                                     </div>

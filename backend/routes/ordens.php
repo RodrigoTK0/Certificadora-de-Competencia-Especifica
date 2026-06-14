@@ -12,6 +12,8 @@ $sql = "
         clientes.nome AS cliente_nome,
         veiculos.modelo AS veiculo_modelo,
         veiculos.marca AS veiculo_marca,
+        ordens_servico.cliente_id,
+        ordens_servico.veiculo_id,
         veiculos.placa AS veiculo_placa
     FROM ordens_servico
     INNER JOIN clientes ON ordens_servico.cliente_id = clientes.id

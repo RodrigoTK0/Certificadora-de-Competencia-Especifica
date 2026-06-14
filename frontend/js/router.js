@@ -314,6 +314,9 @@ function renderOrdersTable(orders) {
             <td>${new Date(o.data_criacao).toLocaleDateString('pt-BR')}</td>
             <td>
                 <button class="btn btn-primary" onclick="abrirAdicionarItem(${o.id})">
+                <button class="btn glass" onclick='abrirEditarOrdem(${JSON.stringify(o)})'>
+                    Editar
+                </button>
                     + Item
                 </button>
 
@@ -709,3 +712,24 @@ document.addEventListener('input', function (event) {
     }
 
 });
+async function abrirEditarOrdem(ordem) {
+    window.location.hash = '#new-order';
+
+    setTimeout(async () => {
+        await carregarClientesOS();
+        await carregarVeiculosOS();
+
+        document.getElementById('order-id').value = ordem.id;
+        document.getElementById('os-client').value = ordem.cliente_id;
+        document.getElementById('os-vehicle').value = ordem.veiculo_id;
+        document.getElementById('order-description').value = ordem.descricao || '';
+
+        const title = document.querySelector('#view-new-order h1');
+        if (title) title.textContent = `Editar Ordem #${String(ordem.id).padStart(3, '0')}`;
+
+        const button = document.querySelector('#form-order button[type="submit"]');
+        if (button) button.innerHTML = '<i data-lucide="save"></i> Salvar Alterações';
+
+        if (window.lucide) lucide.createIcons();
+    }, 100);
+}

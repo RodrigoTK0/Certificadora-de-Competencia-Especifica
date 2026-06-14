@@ -266,7 +266,11 @@ if (formOrder) {
 
         const formData = new FormData(formOrder);
 
-        const result = await apiRequest('cadastrar_ordem.php', {
+        const ordemId = formOrder.querySelector('[name="id"]')?.value;
+
+        const endpoint = ordemId ? 'atualizar_ordem.php' : 'cadastrar_ordem.php';
+
+        const result = await apiRequest(endpoint, {
             method: 'POST',
             body: formData
         });
@@ -276,6 +280,7 @@ if (formOrder) {
         showToast(result.message, result.success ? 'success' : 'error');
 
         if (result.success) {
+            formOrder.querySelector('[name="id"]').value = '';
             formOrder.reset();
             window.location.hash = '#dashboard';
 
