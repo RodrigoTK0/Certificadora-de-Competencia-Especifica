@@ -34,6 +34,21 @@ function openModal(type) {
         if (window.lucide) lucide.createIcons();
 
         if (type === 'vehicle') {
+            const formVehicle = document.getElementById('form-vehicle');
+
+            if (formVehicle) {
+                formVehicle.reset();
+
+                const idInput = document.getElementById('vehicle-id');
+                if (idInput) idInput.value = '';
+
+                const title = document.querySelector('#modal-type-vehicle h2');
+                if (title) title.textContent = 'Novo Veículo';
+
+                const button = document.querySelector('#form-vehicle button[type="submit"]');
+                if (button) button.textContent = 'Salvar Veículo';
+            }
+
             carregarClientesNoSelectVeiculo();
         }
 

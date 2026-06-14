@@ -3,15 +3,16 @@
 include "../config/database.php";
 
 $sql = "
-    SELECT 
-        veiculos.id,
-        veiculos.placa,
-        veiculos.modelo,
-        veiculos.marca,
-        veiculos.ano,
-        clientes.nome AS cliente_nome
-    FROM veiculos
-    INNER JOIN clientes ON veiculos.cliente_id = clientes.id
+   SELECT
+    veiculos.id,
+    veiculos.placa,
+    veiculos.modelo,
+    veiculos.marca,
+    veiculos.ano,
+    veiculos.cliente_id,
+    clientes.nome AS cliente_nome
+FROM veiculos
+LEFT JOIN clientes ON clientes.id = veiculos.cliente_id
 ";
 
 $result = $conn->query($sql);

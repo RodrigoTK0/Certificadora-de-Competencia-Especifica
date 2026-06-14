@@ -544,8 +544,9 @@ async function abrirEditarVeiculo(veiculo) {
     }
 
     const clienteSelect = document.getElementById('vehicle-client');
+
     if (clienteSelect) {
-        clienteSelect.value = veiculo.cliente_id || '';
+        clienteSelect.value = String(veiculo.cliente_id);
     }
 
     const title = document.querySelector('#modal-type-vehicle h2');
