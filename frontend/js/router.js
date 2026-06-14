@@ -337,7 +337,12 @@ function renderOrdersTable(orders) {
             <td><strong>#${String(o.id).padStart(3, '0')}</strong></td>
             <td>${o.cliente_nome}</td>
             <td>${o.veiculo_marca} ${o.veiculo_modelo}</td>
-            <td>${o.descricao}</td>
+            <td class="descricao-cell" title="${o.descricao}">
+                ${o.descricao.length > 40
+            ? o.descricao.substring(0, 40) + '...'
+            : o.descricao
+        }
+</td>
             <td>
                 <select onchange="atualizarStatus(${o.id}, this.value)">
                     <option value="Aberta" ${o.status === 'Aberta' ? 'selected' : ''}>Aberta</option>
@@ -353,25 +358,39 @@ function renderOrdersTable(orders) {
                 
                 <td>
                     <div class="actions-grid">
-                        <button class="btn btn-sm btn-primary" onclick="abrirAdicionarItem(${o.id})">
-                            + Item
+                        <div class="action-buttons">
+    
+                        <button class="btn glass"
+                            title="Adicionar Item"
+                            onclick="abrirAdicionarItem(${o.id})">
+                            <i data-lucide="plus"></i>
                         </button>
 
-                        <button class="btn btn-sm glass" onclick='abrirEditarOrdem(${JSON.stringify(o)})'>
-                            Editar
+                        <button class="btn glass"
+                            title="Editar Ordem"
+                            onclick='abrirEditarOrdem(${JSON.stringify(o)})'>
+                            <i data-lucide="square-pen"></i>
                         </button>
 
-                        <button class="btn btn-sm glass" onclick="abrirDetalhesOrdem(${o.id})">
-                            Detalhes
+                        <button class="btn glass"
+                            title="Ver Detalhes"
+                            onclick="abrirDetalhesOrdem(${o.id})">
+                            <i data-lucide="eye"></i>
                         </button>
 
-                        <button class="btn btn-sm glass" onclick="imprimirOrdem(${o.id})">
-                            Imprimir
+                        <button class="btn glass"
+                            title="Imprimir Ordem"
+                            onclick="imprimirOrdem(${o.id})">
+                            <i data-lucide="printer"></i>
                         </button>
 
-                        <button class="btn btn-sm btn-danger" onclick="excluirOrdem(${o.id})">
-                            Excluir
+                        <button class="btn glass delete-btn"
+                            title="Excluir Ordem"
+                            onclick="excluirOrdem(${o.id})">
+                            <i data-lucide="trash-2"></i>
                         </button>
+
+                    </div>
                 </div>
         </td>
      </tr>
@@ -577,10 +596,10 @@ async function excluirOrdem(id) {
 }
 async function excluirCliente(id) {
     const confirmar = await confirmarAcao(
-    'Tem certeza que deseja excluir este cliente?'
-);
+        'Tem certeza que deseja excluir este cliente?'
+    );
 
-if (!confirmar) return;
+    if (!confirmar) return;
 
     const formData = new FormData();
     formData.append('id', id);
@@ -602,10 +621,10 @@ if (!confirmar) return;
 async function excluirVeiculo(id) {
 
     const confirmar = await confirmarAcao(
-    'Tem certeza que deseja excluir este veículo?'
-);
+        'Tem certeza que deseja excluir este veículo?'
+    );
 
-if (!confirmar) return;
+    if (!confirmar) return;
 
     const formData = new FormData();
 
@@ -1031,4 +1050,26 @@ function confirmarAcao(mensagem) {
             resolve(true);
         };
     });
+}
+function cancelarOrdem() {
+    const formOrder = document.getElementById('form-order');
+
+    if (formOrder) {
+        formOrder.reset();
+
+        const idInput = document.getElementById('order-id');
+        if (idInput) idInput.value = '';
+    }
+
+    const title = document.querySelector('#view-new-order h1');
+    if (title) title.textContent = 'Nova Ordem de Serviço';
+
+    const button = document.querySelector('#form-order button[type="submit"]');
+    if (button) {
+        button.innerHTML = '<i data-lucide="save"></i> Salvar Ordem';
+    }
+
+    window.location.hash = '#orders';
+
+    if (window.lucide) lucide.createIcons();
 }

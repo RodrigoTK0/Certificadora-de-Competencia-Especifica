@@ -539,3 +539,32 @@ select option {
     justify-content: flex-end;
     gap: 1rem;
 }
+.descricao-cell {
+    max-width: 250px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.action-buttons .btn {
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.action-buttons .btn i {
+    width: 18px;
+    height: 18px;
+}
+
+.delete-btn {
+    color: #ef4444;
+}
