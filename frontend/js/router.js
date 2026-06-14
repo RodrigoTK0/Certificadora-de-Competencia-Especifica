@@ -112,8 +112,11 @@ async function renderDashboardData() {
     }
 }
 
+let clientesCache = [];
+
 async function renderClientsData() {
     const tbody = document.querySelector('#table-clients tbody');
+
     if (!tbody) return;
 
     try {
@@ -121,42 +124,63 @@ async function renderClientsData() {
 
         if (!clients) return;
 
-        tbody.innerHTML = clients.map(c => `
-            <tr>
-                <td><strong>${c.nome}</strong></td>
-                    <td>${c.documento || '-'}</td>
-                    <td>${c.telefone}</td>
-                    <td>${c.email || '-'}</td>
-                    <td>${c.veiculos || 'Nenhum veículo'}</td>
-                <td>
-                    <div style="display: flex; gap: 0.5rem;">
+        clientesCache = clients;
 
-                       <button class="btn glass" style="padding: 0.4rem;"
-                            onclick='abrirEditarCliente(${JSON.stringify(c)})'>
-                             <i data-lucide="edit" style="width: 16px;"></i>
-                        </button>
-
-                        <button class="btn glass"
-                            style="padding: 0.4rem; color: var(--danger);"
-                            onclick="excluirCliente(${c.id})">
-
-                            <i data-lucide="trash-2" style="width: 16px;"></i>
-                        </button>
-
-                    </div>
-                </td>
-            </tr>
-        `).join('');
-
-        if (window.lucide) lucide.createIcons();
+        renderClientsTable(clientesCache);
 
     } catch (error) {
         console.error('Erro ao carregar clientes:', error);
+
         tbody.innerHTML = `
             <tr>
-                <td colspan="5">Erro ao carregar clientes.</td>
+                <td colspan="6">Erro ao carregar clientes.</td>
             </tr>
         `;
+    }
+}
+function renderClientsTable(clients) {
+    const tbody = document.querySelector('#table-clients tbody');
+
+    if (!tbody) return;
+
+    if (clients.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="6">Nenhum cliente encontrado.</td>
+            </tr>
+        `;
+        return;
+    }
+
+    tbody.innerHTML = clients.map(c => `
+        <tr>
+            <td><strong>${c.nome}</strong></td>
+            <td>${c.documento || '-'}</td>
+            <td>${c.telefone}</td>
+            <td>${c.email || '-'}</td>
+            <td>${c.veiculos || 'Nenhum veículo'}</td>
+
+            <td>
+                <div style="display: flex; gap: 0.5rem;">
+
+                    <button class="btn glass" style="padding: 0.4rem;"
+                        onclick='abrirEditarCliente(${JSON.stringify(c)})'>
+                        <i data-lucide="edit" style="width: 16px;"></i>
+                    </button>
+
+                    <button class="btn glass"
+                        style="padding: 0.4rem; color: var(--danger);"
+                        onclick="excluirCliente(${c.id})">
+                        <i data-lucide="trash-2" style="width: 16px;"></i>
+                    </button>
+
+                </div>
+            </td>
+        </tr>
+    `).join('');
+
+    if (window.lucide) {
+        lucide.createIcons();
     }
 }
 
@@ -559,3 +583,28 @@ async function abrirEditarVeiculo(veiculo) {
         button.textContent = 'Salvar alterações';
     }
 }
+document.addEventListener('input', function (event) {
+
+    if (event.target.id === 'search-client') {
+
+        const termo = event.target.value
+            .toLowerCase()
+            .trim();
+
+        const filtrados = clientesCache.filter(cliente => {
+
+            const nome = (cliente.nome || '')
+                .toLowerCase();
+
+            const documento = (cliente.documento || '')
+                .toLowerCase();
+
+            return nome.includes(termo)
+                || documento.includes(termo);
+
+        });
+
+        renderClientsTable(filtrados);
+    }
+
+});
