@@ -78,6 +78,16 @@ async function renderDashboardData() {
 
         document.querySelector('#card-active-clients .card-value').textContent = dashboardData.clientes_ativos;
 
+        document.querySelector('#card-vehicles .card-value').textContent =
+            dashboardData.veiculos_cadastrados;
+
+        document.querySelector('#card-waiting-parts .card-value').textContent =
+            dashboardData.ordens_aguardando_pecas;
+
+        document.querySelector('#card-revenue .card-value').textContent =
+            `R$ ${Number(dashboardData.faturamento_total).toFixed(2).replace('.', ',')}`;
+
+
         tbody.innerHTML = orders.map(o => {
             let badge = 'warning';
 
@@ -112,10 +122,10 @@ async function renderDashboardData() {
             return `
                 <tr>
                     <td><strong>#${String(o.id).padStart(3, '0')}</strong></td>
-                    <td>${o.cliente_nome}</td>
-                    <td>${o.veiculo_marca} ${o.veiculo_modelo}</td>
+                    <td>${o.cliente_nome || '-'}</td>
+                    <td>${o.veiculo_marca || ''} ${o.veiculo_modelo || ''}</td>
                     <td><span class="badge badge-${badge}">${o.status}</span></td>
-                    <td>R$ ${Number(o.valor_total).toFixed(2).replace('.', ',')}</td>
+                    <td>R$ ${Number(o.valor_total || 0).toFixed(2).replace('.', ',')}</td>
                     <td>
                         <button class="btn glass" style="padding: 0.4rem;">
                             <i data-lucide="eye" style="width: 16px;"></i>
