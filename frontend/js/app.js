@@ -163,7 +163,11 @@ if (formClient) {
 
         const formData = new FormData(formClient);
 
-        const result = await apiRequest('cadastrar_cliente.php', {
+        const clienteId = formClient.querySelector('[name="id"]')?.value;
+
+        const endpoint = clienteId ? 'atualizar_cliente.php' : 'cadastrar_cliente.php';
+
+        const result = await apiRequest(endpoint, {
             method: 'POST',
             body: formData
         });
@@ -173,6 +177,7 @@ if (formClient) {
         showToast(result.message, result.success ? 'success' : 'error');
 
         if (result.success) {
+            formClient.querySelector('[name="id"]').value = '';
             formClient.reset();
             closeModal();
 

@@ -6,8 +6,10 @@ $sql = "
     SELECT 
         clientes.id,
         clientes.nome,
+        clientes.documento,
         clientes.telefone,
         clientes.email,
+        clientes.endereco,
         GROUP_CONCAT(veiculos.modelo SEPARATOR ', ') AS veiculos
     FROM clientes
     LEFT JOIN veiculos ON veiculos.cliente_id = clientes.id

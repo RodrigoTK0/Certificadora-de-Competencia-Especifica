@@ -4,33 +4,33 @@ include "../config/database.php";
 
 header('Content-Type: application/json');
 
+$id = $_POST['id'] ?? '';
 $nome = $_POST['nome'] ?? '';
-$documento = $_POST['documento'] ?? '';
 $telefone = $_POST['telefone'] ?? '';
 $email = $_POST['email'] ?? '';
 $endereco = $_POST['endereco'] ?? '';
 
-if ($nome === '' || $telefone === '') {
+if ($id === '' || $nome === '' || $telefone === '') {
     echo json_encode([
         "success" => false,
-        "message" => "Nome e telefone são obrigatórios."
+        "message" => "ID, nome e telefone são obrigatórios."
     ]);
     exit;
 }
 
-$sql = "INSERT INTO clientes (nome, documento, telefone, email, endereco) VALUES (?, ?, ?, ?, ?)";
+$sql = "UPDATE clientes SET nome = ?, telefone = ?, email = ?, endereco = ? WHERE id = ?";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("sssss", $nome, $documento, $telefone, $email, $endereco);
+$stmt->bind_param("ssssi", $nome, $telefone, $email, $endereco, $id);
 
 if ($stmt->execute()) {
     echo json_encode([
         "success" => true,
-        "message" => "Cliente cadastrado com sucesso."
+        "message" => "Cliente atualizado com sucesso."
     ]);
 } else {
     echo json_encode([
         "success" => false,
-        "message" => "Erro ao cadastrar cliente: " . $conn->error
+        "message" => "Erro ao atualizar cliente: " . $conn->error
     ]);
 }
 ?>

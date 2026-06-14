@@ -124,14 +124,16 @@ async function renderClientsData() {
         tbody.innerHTML = clients.map(c => `
             <tr>
                 <td><strong>${c.nome}</strong></td>
-                <td>${c.telefone}</td>
-                <td>${c.email}</td>
-                <td>${c.veiculos || 'Nenhum veículo'}</td>
+                    <td>${c.documento || '-'}</td>
+                    <td>${c.telefone}</td>
+                    <td>${c.email || '-'}</td>
+                    <td>${c.veiculos || 'Nenhum veículo'}</td>
                 <td>
                     <div style="display: flex; gap: 0.5rem;">
 
-                        <button class="btn glass" style="padding: 0.4rem;">
-                            <i data-lucide="edit" style="width: 16px;"></i>
+                       <button class="btn glass" style="padding: 0.4rem;"
+                            onclick='abrirEditarCliente(${JSON.stringify(c)})'>
+                             <i data-lucide="edit" style="width: 16px;"></i>
                         </button>
 
                         <button class="btn glass"
@@ -494,4 +496,33 @@ async function excluirVeiculo(id) {
         renderVehiclesData();
         renderDashboardData();
     }
+}
+function abrirEditarCliente(cliente) {
+    openModal('client');
+
+    document.getElementById('client-id').value = cliente.id;
+    document.getElementById('client-name').value = cliente.nome || '';
+    document.getElementById('client-phone').value = cliente.telefone || '';
+    document.getElementById('client-email').value = cliente.email || '';
+    
+    const documentoInput = document.getElementById('client-document');
+    if (documentoInput) {
+        documentoInput.value = cliente.documento || '';
+    }
+
+    const enderecoInput = document.getElementById('client-address');
+    if (enderecoInput) {
+        enderecoInput.value = cliente.endereco || '';
+    }
+
+    const title = document.querySelector('#modal-type-client h3');
+    if (title) {
+        title.textContent = 'Editar Cliente';
+    }
+
+    const button = document.querySelector('#form-client button[type="submit"]');
+    if (button) {
+        button.textContent = 'Salvar alterações';
+    }
+
 }
