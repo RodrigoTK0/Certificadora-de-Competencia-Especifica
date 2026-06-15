@@ -357,8 +357,7 @@ function renderOrdersTable(orders) {
                 <td>${new Date(o.data_criacao).toLocaleDateString('pt-BR')}</td>
                 
                 <td>
-                    <div class="actions-grid">
-                        <div class="action-buttons">
+                    <div class="action-buttons">
     
                         <button class="btn glass"
                             title="Adicionar Item"
@@ -411,8 +410,6 @@ async function renderReportsData() {
         document.getElementById('report-faturamento').textContent =
             `R$ ${Number(data.faturamento).toFixed(2).replace('.', ',')}`;
 
-        document.getElementById('report-faturamento').textContent =
-            `R$ ${Number(data.faturamento).toFixed(2).replace('.', ',')}`;
 
         const ctx = document.getElementById('chart-status-orders');
 
