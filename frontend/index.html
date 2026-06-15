@@ -68,10 +68,16 @@
                         </li>
                     </ul>
                 </nav>
-                <div style="margin-top: auto;">
+                <div class="sidebar-user-card">
+                    <strong id="logged-user-name">Usuário</strong>
+                    <span id="logged-user-role">Cargo</span>
+                </div>
+
+                <div style="margin-top: 1rem;">
                     <a href="#login" class="nav-link" style="color: var(--danger);"
                         onclick="localStorage.removeItem('usuario')">
-                        <span>Sair</span></a>
+                        <span>Sair</span>
+                    </a>
                 </div>
             </aside>
 
@@ -85,7 +91,9 @@
                     <section id="view-dashboard" class="view">
                         <div class="header-row">
                             <div>
-                                <h1 style="font-size: 2rem;">Bem-vindo, Jose!</h1>
+                                <h1 id="dashboard-welcome" style="font-size: 2rem;">
+                                    Bem-vindo!
+                                </h1>
                                 <p style="color: var(--text-muted);">Aqui está o resumo da sua oficina hoje.</p>
                             </div>
                             <button class="btn btn-primary" onclick="window.location.hash = '#new-order'">

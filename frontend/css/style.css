@@ -599,3 +599,22 @@ select option {
     color: var(--text-muted);
     pointer-events: none;
 }
+.sidebar-user-card {
+    margin-top: auto;
+    padding: 1rem;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+}
+
+.sidebar-user-card strong {
+    display: block;
+    color: var(--text-main);
+    font-size: 0.95rem;
+    margin-bottom: 0.25rem;
+}
+
+.sidebar-user-card span {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}

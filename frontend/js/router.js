@@ -17,6 +17,18 @@ function navigate() {
     const hash = window.location.hash.substring(1) || 'login';
     const usuarioLogado = localStorage.getItem('usuario');
     const usuario = usuarioLogado ? JSON.parse(usuarioLogado) : null;
+    const loggedUserName = document.getElementById('logged-user-name');
+    const loggedUserRole = document.getElementById('logged-user-role');
+
+    if (usuario && loggedUserName && loggedUserRole) {
+        loggedUserName.textContent = usuario.nome || 'Usuário';
+        loggedUserRole.textContent = usuario.tipo || 'Funcionário';
+        const dashboardWelcome = document.getElementById('dashboard-welcome');
+
+        if (usuario && dashboardWelcome) {
+            dashboardWelcome.textContent = `Bem-vindo, ${usuario.nome}!`;
+        }
+    }
 
     if (hash === 'settings' && usuario?.tipo !== 'Administrador') {
         showToast('Acesso permitido apenas para administradores.', 'error');
