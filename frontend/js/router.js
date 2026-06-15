@@ -7,7 +7,8 @@ const views = {
     'vehicles': { title: 'Veículos - SOS', el: 'view-vehicles', layout: true },
     'orders': { title: 'Ordens - SOS', el: 'view-orders', layout: true },
     'new-order': { title: 'Nova O.S. - SOS', el: 'view-new-order', layout: true },
-    'reports': { title: 'Relatórios - SOS', el: 'view-reports', layout: true }
+    'reports': { title: 'Relatórios - SOS', el: 'view-reports', layout: true },
+    'settings': { title: 'Configurações - SOS', el: 'view-settings', layout: true }
 
 };
 
@@ -15,6 +16,13 @@ const views = {
 function navigate() {
     const hash = window.location.hash.substring(1) || 'login';
     const usuarioLogado = localStorage.getItem('usuario');
+    const usuario = usuarioLogado ? JSON.parse(usuarioLogado) : null;
+
+    if (hash === 'settings' && usuario?.tipo !== 'Administrador') {
+        showToast('Acesso permitido apenas para administradores.', 'error');
+        window.location.hash = '#dashboard';
+        return;
+    }
 
     if (hash !== 'login' && !usuarioLogado) {
         window.location.hash = '#login';
@@ -47,6 +55,16 @@ function navigate() {
     document.querySelectorAll('.nav-link').forEach(link => {
         link.classList.toggle('active', link.getAttribute('data-link') === hash);
     });
+    const settingsLink = document.querySelector('[data-link="settings"]');
+
+    if (settingsLink && usuario) {
+        const settingsItem = settingsLink.closest('li');
+
+        if (settingsItem) {
+            settingsItem.style.display =
+                usuario.tipo === 'Administrador' ? '' : 'none';
+        }
+    }
 
     // Carrega os dados da tela
     if (hash === 'dashboard') renderDashboardData();
@@ -54,10 +72,12 @@ function navigate() {
     if (hash === 'vehicles') renderVehiclesData();
     if (hash === 'orders') renderOrdersData();
     if (hash === 'reports') renderReportsData();
+    if (hash === 'settings') renderSettingsData();
 
     // Atualiza ícones Lucide
     if (window.lucide) lucide.createIcons();
 }
+
 
 // --- Funções para preencher as tabelas ---
 
@@ -1063,4 +1083,103 @@ function cancelarOrdem() {
     window.location.hash = '#orders';
 
     if (window.lucide) lucide.createIcons();
+}
+async function renderSettingsData() {
+
+    const config = await apiRequest('configuracoes.php');
+    const usuarios = await apiRequest('usuarios.php');
+
+    if (config) {
+        document.getElementById('config-nome-oficina').value =
+            config.nome_oficina || '';
+
+        document.getElementById('config-telefone').value =
+            config.telefone || '';
+
+        document.getElementById('config-email').value =
+            config.email || '';
+
+        document.getElementById('config-endereco').value =
+            config.endereco || '';
+    }
+
+    const tbody = document.querySelector('#table-users tbody');
+
+    if (tbody && usuarios) {
+
+        tbody.innerHTML = usuarios.map(usuario => `
+    <tr>
+        <td>${usuario.nome}</td>
+        <td>${usuario.email}</td>
+        <td>
+            <span class="badge ${usuario.tipo === 'Administrador' ? 'badge-success' : 'badge-info'}">
+                ${usuario.tipo}
+            </span>
+        </td>
+        <td>
+            <div class="action-buttons">
+                <button class="btn glass"
+                    title="Editar Usuário"
+                    onclick='abrirEditarUsuario(${JSON.stringify(usuario)})'>
+                    <i data-lucide="square-pen"></i>
+                </button>
+                <button class="btn glass delete-btn"
+                    title="Excluir Usuário"
+                    onclick="excluirUsuario(${usuario.id})">
+                    <i data-lucide="trash-2"></i>
+                </button>
+            </div>
+        </td>
+    </tr>
+`).join('');
+    }
+
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+}
+function abrirEditarUsuario(usuario) {
+    openModal('user');
+
+    document.getElementById('user-id').value = usuario.id;
+    document.getElementById('user-name').value = usuario.nome || '';
+    document.getElementById('user-email').value = usuario.email || '';
+    document.getElementById('user-password').value = '';
+    document.getElementById('user-type').value = usuario.tipo || 'Funcionário';
+
+    const title = document.querySelector('#modal-type-user h2');
+    if (title) title.textContent = 'Editar Usuário';
+
+    const button = document.querySelector('#form-user button[type="submit"]');
+    if (button) button.textContent = 'Salvar alterações';
+}
+async function excluirUsuario(id) {
+    const usuarioLogado = JSON.parse(localStorage.getItem('usuario'));
+
+    if (usuarioLogado && String(usuarioLogado.id) === String(id)) {
+        showToast('Você não pode excluir o próprio usuário logado.', 'error');
+        return;
+    }
+
+    const confirmar = await confirmarAcao(
+        'Deseja realmente excluir este usuário? Esta ação não poderá ser desfeita.'
+    );
+
+    if (!confirmar) return;
+
+    const formData = new FormData();
+    formData.append('id', id);
+
+    const result = await apiRequest('excluir_usuario.php', {
+        method: 'POST',
+        body: formData
+    });
+
+    if (!result) return;
+
+    showToast(result.message, result.success ? 'success' : 'error');
+
+    if (result.success) {
+        renderSettingsData();
+    }
 }

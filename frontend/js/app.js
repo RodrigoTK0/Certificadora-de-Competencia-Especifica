@@ -408,3 +408,65 @@ if (formOrderEdit) {
         }
     });
 }
+const formSettings = document.getElementById('form-settings');
+
+if (formSettings) {
+
+    formSettings.addEventListener('submit', async function (event) {
+
+        event.preventDefault();
+
+        const formData = new FormData(formSettings);
+
+        const result = await apiRequest('salvar_configuracoes.php', {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!result) return;
+
+        showToast(
+            result.message,
+            result.success ? 'success' : 'error'
+        );
+    });
+}
+const formUser = document.getElementById('form-user');
+
+if (formUser) {
+
+    formUser.addEventListener('submit', async function (event) {
+
+        event.preventDefault();
+
+        const formData = new FormData(formUser);
+
+        const usuarioId = formUser.querySelector('[name="id"]')?.value;
+
+        const endpoint = usuarioId ? 'atualizar_usuario.php' : 'cadastrar_usuario.php';
+
+        const result = await apiRequest(endpoint, {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!result) return;
+
+        showToast(
+            result.message,
+            result.success ? 'success' : 'error'
+        );
+
+        if (result.success) {
+
+            formUser.reset();
+            formUser.querySelector('[name="id"]').value = '';
+
+            closeModal();
+
+            if (typeof renderSettingsData === 'function') {
+                renderSettingsData();
+            }
+        }
+    });
+}

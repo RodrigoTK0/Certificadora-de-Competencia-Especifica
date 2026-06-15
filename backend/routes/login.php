@@ -31,7 +31,8 @@ if ($result->num_rows > 0) {
         "usuario" => [
             "id" => $usuario["id"],
             "nome" => $usuario["nome"],
-            "email" => $usuario["email"]
+            "email" => $usuario["email"],
+            "tipo" => $usuario["tipo"]
         ]
     ]);
 } else {

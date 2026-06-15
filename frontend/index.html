@@ -59,9 +59,13 @@
                                 <span>Relatórios</span>
                             </a>
                         </li>
+
+                        <li>
+                            <a href="#settings" class="nav-link" data-link="settings">
+                                <i data-lucide="settings"></i>
+                                <span>Configurações</span>
+                            </a>
                         </li>
-                        <li><a href="#settings" class="nav-link" data-link="settings"><i data-lucide="settings"></i>
-                                <span>Configurações</span></a></li>
                     </ul>
                 </nav>
                 <div style="margin-top: auto;">
@@ -312,6 +316,68 @@
                             </div>
                         </div>
 
+                    </section>
+                    <section id="view-settings" class="view" style="display: none;">
+                        <div class="header-row">
+                            <h1 style="font-size: 2rem;">Configurações</h1>
+                        </div>
+
+                        <div class="glass" style="padding: 1.5rem; margin-bottom: 2rem;">
+                            <h2 style="margin-bottom: 1.5rem;">Dados da Oficina</h2>
+
+                            <form id="form-settings">
+                                <div class="form-group">
+                                    <label>Nome da Oficina</label>
+                                    <input type="text" name="nome_oficina" id="config-nome-oficina" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Telefone</label>
+                                    <input type="text" name="telefone" id="config-telefone">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>E-mail</label>
+                                    <input type="email" name="email" id="config-email">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Endereço</label>
+                                    <input type="text" name="endereco" id="config-endereco">
+                                </div>
+
+                                <button type="submit" class="btn btn-primary">
+                                    Salvar Configurações
+                                </button>
+                            </form>
+                        </div>
+
+                        <div class="glass" style="padding: 1.5rem;">
+                            <div class="header-row" style="margin-bottom: 1.5rem;">
+                                <h2>Usuários do Sistema</h2>
+
+                                <button class="btn btn-primary" onclick="openModal('user')">
+                                    <i data-lucide="user-plus"></i>
+                                    Novo Usuário
+                                </button>
+                            </div>
+
+                            <div class="table-container">
+                                <table id="table-users">
+                                    <thead>
+                                        <tr>
+                                            <th>Nome</th>
+                                            <th>E-mail</th>
+                                            <th>Tipo</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Usuários via JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </section>
                     <!-- Tela de Nova Ordem de Serviço -->
                     <section id="view-new-order" class="view" style="display: none;">
@@ -593,6 +659,51 @@
                     <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem;">
                         <button type="button" class="btn glass" onclick="closeModal()">Cancelar</button>
                         <button type="submit" class="btn btn-primary">Salvar Item</button>
+                    </div>
+                </form>
+            </div>
+            <div id="modal-type-user" class="modal-body" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                    <h2>Novo Usuário</h2>
+
+                    <button class="btn glass" onclick="closeModal()">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+
+                <form id="form-user">
+                    <input type="hidden" id="user-id" name="id">
+                    <div class="form-group">
+                        <label>Nome</label>
+                        <input type="text" id="user-name" name="nome" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>E-mail</label>
+                        <input type="email" id="user-email" name="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Senha</label>
+                        <input type="password" id="user-password" name="senha">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Tipo</label>
+                        <select id="user-type" name="tipo" required>
+                            <option value="Funcionário">Funcionário</option>
+                            <option value="Administrador">Administrador</option>
+                        </select>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem;">
+                        <button type="button" class="btn glass" onclick="closeModal()">
+                            Cancelar
+                        </button>
+
+                        <button type="submit" class="btn btn-primary">
+                            Salvar Usuário
+                        </button>
                     </div>
                 </form>
             </div>
