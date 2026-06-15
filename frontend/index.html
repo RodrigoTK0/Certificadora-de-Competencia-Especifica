@@ -298,55 +298,22 @@
                             <h1 style="font-size: 2rem;">Relatórios do Sistema</h1>
                         </div>
 
-                        <div class="stats-grid">
+                        <div class="glass" style="padding: 1.5rem; margin-bottom: 2rem;">
+                            <h2 style="margin-bottom: 1rem;">Resumo Financeiro</h2>
 
-                            <div class="glass stat-card">
-                                <div class="stat-info">
-                                    <h3 id="report-clientes">0</h3>
-                                    <p>Clientes</p>
-                                </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="color: var(--text-muted);">Faturamento total das ordens concluídas</span>
+                                <strong id="report-faturamento" style="font-size: 1.6rem; color: var(--success);">
+                                    R$ 0,00
+                                </strong>
                             </div>
+                        </div>
 
-                            <div class="glass stat-card">
-                                <div class="stat-info">
-                                    <h3 id="report-veiculos">0</h3>
-                                    <p>Veículos</p>
-                                </div>
-                            </div>
+                        <div class="glass" style="padding: 1.5rem;">
+                            <h2 style="margin-bottom: 1.5rem;">Ordens por Status</h2>
 
-                            <div class="glass stat-card">
-                                <div class="stat-info">
-                                    <h3 id="report-abertas">0</h3>
-                                    <p>Ordens Abertas</p>
-                                </div>
-                            </div>
-
-                            <div class="glass stat-card">
-                                <div class="stat-info">
-                                    <h3 id="report-andamento">0</h3>
-                                    <p>Em Andamento</p>
-                                </div>
-                            </div>
-
-                            <div class="glass stat-card">
-                                <div class="stat-info">
-                                    <h3 id="report-concluidas">0</h3>
-                                    <p>Concluídas</p>
-                                </div>
-                            </div>
-
-                            <div class="glass stat-card">
-                                <div class="stat-info">
-                                    <h3 id="report-faturamento">R$ 0,00</h3>
-                                    <p>Faturamento</p>
-                                </div>
-                            </div>
-                            <div class="glass" style="padding: 1.5rem; margin-top: 2rem;">
-                                <h2 style="margin-bottom: 1.5rem;">Status das Ordens de Serviço</h2>
-
-                                <div style="max-width: 450px; margin: auto;">
-                                    <canvas id="chart-status-orders"></canvas>
-                                </div>
+                            <div style="max-width: 420px; margin: auto;">
+                                <canvas id="chart-status-orders"></canvas>
                             </div>
                         </div>
 

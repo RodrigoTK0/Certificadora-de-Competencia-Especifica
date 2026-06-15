@@ -408,11 +408,8 @@ async function renderReportsData() {
 
         if (!data) return;
 
-        document.getElementById('report-clientes').textContent = data.total_clientes;
-        document.getElementById('report-veiculos').textContent = data.total_veiculos;
-        document.getElementById('report-abertas').textContent = data.ordens_abertas;
-        document.getElementById('report-andamento').textContent = data.ordens_andamento;
-        document.getElementById('report-concluidas').textContent = data.ordens_concluidas;
+        document.getElementById('report-faturamento').textContent =
+            `R$ ${Number(data.faturamento).toFixed(2).replace('.', ',')}`;
 
         document.getElementById('report-faturamento').textContent =
             `R$ ${Number(data.faturamento).toFixed(2).replace('.', ',')}`;
