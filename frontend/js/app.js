@@ -56,6 +56,11 @@ function openModal(type) {
             carregarClientesOS();
             carregarVeiculosOS();
         }
+
+        if (type === 'order-edit') {
+            carregarClientesNoSelectEdicaoOrdem();
+            carregarVeiculosNoSelectEdicaoOrdem();
+        }
     }
 }
 
@@ -341,5 +346,65 @@ if (menuToggle && sidebar) {
         link.addEventListener('click', () => {
             sidebar.classList.remove('active');
         });
+    });
+}
+async function carregarClientesNoSelectEdicaoOrdem() {
+    const select = document.getElementById('edit-order-client');
+    if (!select) return;
+
+    const clientes = await apiRequest('clientes.php');
+    if (!clientes) return;
+
+    select.innerHTML = '<option value="">Selecione um cliente...</option>';
+
+    clientes.forEach(cliente => {
+        select.innerHTML += `
+            <option value="${cliente.id}">${cliente.nome}</option>
+        `;
+    });
+}
+
+async function carregarVeiculosNoSelectEdicaoOrdem() {
+    const select = document.getElementById('edit-order-vehicle');
+    if (!select) return;
+
+    const veiculos = await apiRequest('veiculos.php');
+    if (!veiculos) return;
+
+    select.innerHTML = '<option value="">Selecione um veículo...</option>';
+
+    veiculos.forEach(veiculo => {
+        select.innerHTML += `
+            <option value="${veiculo.id}">
+                ${veiculo.marca} ${veiculo.modelo} (${veiculo.placa})
+            </option>
+        `;
+    });
+}
+
+const formOrderEdit = document.getElementById('form-order-edit');
+
+if (formOrderEdit) {
+    formOrderEdit.addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        const formData = new FormData(formOrderEdit);
+
+        const result = await apiRequest('atualizar_ordem.php', {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!result) return;
+
+        showToast(result.message, result.success ? 'success' : 'error');
+
+        if (result.success) {
+            formOrderEdit.reset();
+            closeModal();
+
+            if (typeof renderOrdersData === 'function') renderOrdersData();
+            if (typeof renderDashboardData === 'function') renderDashboardData();
+        }
     });
 }

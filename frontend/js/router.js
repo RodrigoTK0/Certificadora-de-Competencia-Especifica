@@ -782,25 +782,22 @@ document.addEventListener('input', function (event) {
 
 });
 async function abrirEditarOrdem(ordem) {
-    window.location.hash = '#new-order';
+    openModal('order-edit');
 
-    setTimeout(async () => {
-        await carregarClientesOS();
-        await carregarVeiculosOS();
+    await carregarClientesNoSelectEdicaoOrdem();
+    await carregarVeiculosNoSelectEdicaoOrdem();
 
-        document.getElementById('order-id').value = ordem.id;
-        document.getElementById('os-client').value = ordem.cliente_id;
-        document.getElementById('os-vehicle').value = ordem.veiculo_id;
-        document.getElementById('order-description').value = ordem.descricao || '';
+    document.getElementById('edit-order-id').value = ordem.id;
+    document.getElementById('edit-order-client').value = String(ordem.cliente_id);
+    document.getElementById('edit-order-vehicle').value = String(ordem.veiculo_id);
+    document.getElementById('edit-order-description').value = ordem.descricao || '';
 
-        const title = document.querySelector('#view-new-order h1');
-        if (title) title.textContent = `Editar Ordem #${String(ordem.id).padStart(3, '0')}`;
+    const title = document.getElementById('edit-order-title');
+    if (title) {
+        title.textContent = `Editar Ordem #${String(ordem.id).padStart(3, '0')}`;
+    }
 
-        const button = document.querySelector('#form-order button[type="submit"]');
-        if (button) button.innerHTML = '<i data-lucide="save"></i> Salvar Alterações';
-
-        if (window.lucide) lucide.createIcons();
-    }, 100);
+    if (window.lucide) lucide.createIcons();
 }
 async function imprimirOrdem(ordemId) {
     const ordens = await apiRequest('ordens.php');
