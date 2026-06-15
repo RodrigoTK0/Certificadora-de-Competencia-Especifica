@@ -828,6 +828,7 @@ async function abrirEditarOrdem(ordem) {
 async function imprimirOrdem(ordemId) {
     const ordens = await apiRequest('ordens.php');
     const itens = await apiRequest(`listar_itens_ordem.php?ordem_id=${ordemId}`);
+    const config = await apiRequest('configuracoes.php');
 
     if (!ordens || !itens) return;
 
@@ -961,8 +962,12 @@ async function imprimirOrdem(ordemId) {
             </button>
 
             <div class="header">
-                <h1>Sistema O.S. - Ordem de Serviço</h1>
-                <div class="subtitle">Oficina Mecânica</div>
+                <h1>${config.nome_oficina || 'Sistema O.S.'}</h1>
+                    <div class="subtitle">
+                        ${config.telefone || ''} ${config.email ? ' | ' + config.email : ''}
+                        <br>
+                        ${config.endereco || ''}
+                    </div>
             </div>
 
             <div class="section">
