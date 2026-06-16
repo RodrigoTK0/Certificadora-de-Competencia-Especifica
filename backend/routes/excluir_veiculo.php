@@ -6,7 +6,7 @@ header('Content-Type: application/json');
 
 $id = $_POST['id'] ?? '';
 
-if ($id == '') {
+if ($id === '') {
     echo json_encode([
         "success" => false,
         "message" => "ID do veículo não informado."
@@ -14,45 +14,37 @@ if ($id == '') {
     exit;
 }
 
-// Busca ordens do veículo
-$sqlOrdens = "SELECT id FROM ordens_servico WHERE veiculo_id = ?";
+$sqlOrdens = "SELECT COUNT(*) AS total
+              FROM ordens_servico
+              WHERE veiculo_id = ?";
+
 $stmtOrdens = $conn->prepare($sqlOrdens);
 $stmtOrdens->bind_param("i", $id);
 $stmtOrdens->execute();
 
-$resultOrdens = $stmtOrdens->get_result();
+$totalOrdens = $stmtOrdens->get_result()->fetch_assoc()['total'];
 
-while ($ordem = $resultOrdens->fetch_assoc()) {
+if ($totalOrdens > 0) {
 
-    $ordem_id = $ordem['id'];
+    echo json_encode([
+        "success" => false,
+        "message" => "Não é possível excluir este veículo, pois ele possui ordem de serviço vinculada."
+    ]);
 
-    // Remove itens
-    $sqlItens = "DELETE FROM itens_ordem WHERE ordem_id = ?";
-    $stmtItens = $conn->prepare($sqlItens);
-    $stmtItens->bind_param("i", $ordem_id);
-    $stmtItens->execute();
-
-    // Remove ordem
-    $sqlDeleteOrdem = "DELETE FROM ordens_servico WHERE id = ?";
-    $stmtDeleteOrdem = $conn->prepare($sqlDeleteOrdem);
-    $stmtDeleteOrdem->bind_param("i", $ordem_id);
-    $stmtDeleteOrdem->execute();
+    exit;
 }
 
-// Remove veículo
 $sql = "DELETE FROM veiculos WHERE id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $id);
 
-if ($stmt->execute()) {
-    echo json_encode([
-        "success" => true,
-        "message" => "Veículo excluído com sucesso."
-    ]);
-} else {
-    echo json_encode([
-        "success" => false,
-        "message" => "Erro ao excluir veículo."
-    ]);
-}
+$success = $stmt->execute();
+
+echo json_encode([
+    "success" => $success,
+    "message" => $success
+        ? "Veículo excluído com sucesso."
+        : "Erro ao excluir veículo."
+]);
+
 ?>

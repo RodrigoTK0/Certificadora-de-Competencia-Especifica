@@ -287,7 +287,7 @@ if (formOrder) {
         if (result.success) {
             formOrder.querySelector('[name="id"]').value = '';
             formOrder.reset();
-            window.location.hash = '#dashboard';
+            window.location.hash = '#orders';
 
             if (typeof renderDashboardData === 'function') renderDashboardData();
             if (typeof renderOrdersData === 'function') renderOrdersData();
