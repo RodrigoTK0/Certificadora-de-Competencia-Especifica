@@ -96,9 +96,7 @@
                                 </h1>
                                 <p style="color: var(--text-muted);">Aqui está o resumo da sua oficina hoje.</p>
                             </div>
-                            <button class="btn btn-primary" onclick="window.location.hash = '#new-order'">
-                                <i data-lucide="plus"></i> Nova Ordem
-                            </button>
+
                         </div>
 
                         <div class="stats-grid">
@@ -168,6 +166,26 @@
                                     <p>Faturamento</p>
                                 </div>
                             </div>
+                            <div class="glass stat-card" id="card-progress-orders">
+                                <div class="stat-icon"
+                                    style="background: rgba(59, 130, 246, 0.1); color: var(--primary);">
+                                    <i data-lucide="wrench"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3 class="card-value">0</h3>
+                                    <p>Em Andamento</p>
+                                </div>
+                            </div>
+
+                            <div class="glass stat-card" id="card-ready-orders">
+                                <div class="stat-icon" style="background: rgba(168, 85, 247, 0.1); color: #a855f7;">
+                                    <i data-lucide="check-check"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3 class="card-value">0</h3>
+                                    <p>Prontas Retirada</p>
+                                </div>
+                            </div>
 
                         </div>
 
@@ -182,7 +200,6 @@
                                             <th>Veículo</th>
                                             <th>Status</th>
                                             <th>Valor</th>
-                                            <th>Ações</th>
                                         </tr>
                                     </thead>
                                     <tbody>

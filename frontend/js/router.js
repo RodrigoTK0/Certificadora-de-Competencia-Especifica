@@ -118,6 +118,12 @@ async function renderDashboardData() {
 
         document.querySelector('#card-revenue .card-value').textContent =
             `R$ ${Number(dashboardData.faturamento_total).toFixed(2).replace('.', ',')}`;
+            
+        document.querySelector('#card-progress-orders .card-value').textContent =
+            dashboardData.ordens_andamento;
+
+        document.querySelector('#card-ready-orders .card-value').textContent =
+            dashboardData.ordens_prontas_retirada;
 
 
         tbody.innerHTML = orders.map(o => {
@@ -152,19 +158,14 @@ async function renderDashboardData() {
             }
 
             return `
-                <tr>
-                    <td><strong>#${String(o.id).padStart(3, '0')}</strong></td>
-                    <td>${o.cliente_nome || '-'}</td>
-                    <td>${o.veiculo_marca || ''} ${o.veiculo_modelo || ''}</td>
-                    <td><span class="badge badge-${badge}">${o.status}</span></td>
-                    <td>R$ ${Number(o.valor_total || 0).toFixed(2).replace('.', ',')}</td>
-                    <td>
-                        <button class="btn glass" style="padding: 0.4rem;">
-                            <i data-lucide="eye" style="width: 16px;"></i>
-                        </button>
-                    </td>
-                </tr>
-            `;
+                        <tr onclick="abrirDetalhesOrdem(${o.id})" style="cursor: pointer;">
+                            <td><strong>#${String(o.id).padStart(3, '0')}</strong></td>
+                            <td>${o.cliente_nome || '-'}</td>
+                            <td>${o.veiculo_marca || ''} ${o.veiculo_modelo || ''}</td>
+                            <td><span class="badge badge-${badge}">${o.status}</span></td>
+                            <td>R$ ${Number(o.valor_total || 0).toFixed(2).replace('.', ',')}</td>
+                        </tr>
+                    `;
         }).join('');
 
         if (window.lucide) lucide.createIcons();
@@ -173,7 +174,7 @@ async function renderDashboardData() {
         console.error('Erro ao carregar ordens:', error);
         tbody.innerHTML = `
             <tr>
-                <td colspan="6">Erro ao carregar ordens de serviço.</td>
+                <td colspan="5">Erro ao carregar ordens de serviço.</td>
             </tr>
         `;
     }
@@ -453,13 +454,35 @@ async function renderReportsData() {
             statusChart = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Abertas', 'Em andamento', 'Concluídas'],
+                    labels: [
+                        'Abertas',
+                        'Em andamento',
+                        'Aguardando peças',
+                        'Pronta para retirada',
+                        'Concluídas',
+                        'Canceladas'
+                    ],
                     datasets: [{
                         data: [
                             data.ordens_abertas,
                             data.ordens_andamento,
-                            data.ordens_concluidas
-                        ]
+                            data.ordens_aguardando_pecas,
+                            data.ordens_prontas_retirada,
+                            data.ordens_concluidas,
+                            data.ordens_canceladas
+                        ],
+
+                        backgroundColor: [
+                            '#f59e0b',
+                            '#3b82f6',
+                            '#f97316',
+                            '#8b5cf6',
+                            '#22c55e',
+                            '#ef4444'
+                        ],
+
+                        borderColor: '#1e293b',
+                        borderWidth: 2
                     }]
                 },
                 options: {

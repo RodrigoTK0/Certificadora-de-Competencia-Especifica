@@ -10,7 +10,11 @@ $sqlClientes = "SELECT COUNT(*) AS total FROM clientes";
 $sqlVeiculos = "SELECT COUNT(*) AS total FROM veiculos";
 $sqlAguardando = "SELECT COUNT(*) AS total FROM ordens_servico WHERE status = 'Aguardando peças'";
 $sqlFaturamento = "SELECT COALESCE(SUM(valor_total), 0) AS total FROM ordens_servico WHERE status = 'Concluída' OR status = 'Concluído'";
+$sqlAndamento = "SELECT COUNT(*) AS total FROM ordens_servico WHERE status = 'Em andamento'";
+$sqlProntas = "SELECT COUNT(*) AS total FROM ordens_servico WHERE status = 'Pronta para retirada'";
 
+$andamento = $conn->query($sqlAndamento)->fetch_assoc()['total'];
+$prontas = $conn->query($sqlProntas)->fetch_assoc()['total'];
 $abertas = $conn->query($sqlAbertas)->fetch_assoc()['total'];
 $concluidas = $conn->query($sqlConcluidas)->fetch_assoc()['total'];
 $clientes = $conn->query($sqlClientes)->fetch_assoc()['total'];
@@ -24,7 +28,10 @@ echo json_encode([
     "clientes_ativos" => $clientes,
     "veiculos_cadastrados" => $veiculos,
     "ordens_aguardando_pecas" => $aguardando,
+    "ordens_andamento" => $andamento,
+    "ordens_prontas_retirada" => $prontas,
     "faturamento_total" => $faturamento
+   
 ]);
 
 ?>

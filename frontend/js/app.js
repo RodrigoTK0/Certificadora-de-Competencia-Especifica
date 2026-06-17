@@ -147,7 +147,7 @@ async function carregarClientesOS() {
     });
 }
 
-async function carregarVeiculosOS() {
+async function carregarVeiculosOS(clienteId = '') {
     const select = document.getElementById('os-vehicle');
 
     if (!select) return;
@@ -158,7 +158,11 @@ async function carregarVeiculosOS() {
 
     select.innerHTML = '<option value="">Selecione um veículo...</option>';
 
-    veiculos.forEach(veiculo => {
+    const veiculosFiltrados = clienteId
+        ? veiculos.filter(veiculo => String(veiculo.cliente_id) === String(clienteId))
+        : [];
+
+    veiculosFiltrados.forEach(veiculo => {
         select.innerHTML += `
             <option value="${veiculo.id}">
                 ${veiculo.marca} ${veiculo.modelo} (${veiculo.placa})
@@ -166,7 +170,19 @@ async function carregarVeiculosOS() {
         `;
     });
 }
+const selectClienteOS = document.getElementById('os-client');
 
+if (selectClienteOS) {
+
+    selectClienteOS.addEventListener('change', async function () {
+
+        await carregarVeiculosOS(this.value);
+
+        document.getElementById('os-vehicle').value = '';
+
+    });
+
+}
 // Cadastro de cliente
 const formClient = document.getElementById('form-client');
 
@@ -203,6 +219,9 @@ if (formClient) {
 
             if (typeof renderClientsData === 'function') renderClientsData();
             if (typeof renderDashboardData === 'function') renderDashboardData();
+
+            carregarClientesNoSelectVeiculo();
+            carregarClientesOS();
         }
     });
 }
@@ -255,7 +274,7 @@ const formOrder = document.getElementById('form-order');
 
 if (formOrder) {
     carregarClientesOS();
-    carregarVeiculosOS();
+    carregarVeiculosOS('');
 
     formOrder.addEventListener('submit', async function (event) {
         event.preventDefault();
