@@ -1,7 +1,4 @@
-/* 
-   SISTEMA DE DESIGN - SOS OFICINA
-   Aqui é onde a mágica visual acontece! 
-*/
+
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700&display=swap');
 
@@ -23,7 +20,7 @@
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Reset básico pra tudo começar do zero */
+
 * {
     margin: 0;
     padding: 0;
@@ -38,7 +35,7 @@ body {
     overflow-x: hidden;
 }
 
-/* Títulos com uma fonte mais moderna (Outfit) */
+
 h1, h2, h3, .brand-name {
     font-family: 'Outfit', sans-serif;
 }
@@ -55,7 +52,7 @@ h1, h2, h3, .brand-name {
     border-radius: 10px;
 }
 
-/* O famoso efeito "Glass" que dá o ar premium ao sistema */
+/* efeito "Glass" */
 .glass {
     background: var(--bg-card);
     backdrop-filter: var(--glass-blur);
