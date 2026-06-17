@@ -118,7 +118,7 @@ async function renderDashboardData() {
 
         document.querySelector('#card-revenue .card-value').textContent =
             `R$ ${Number(dashboardData.faturamento_total).toFixed(2).replace('.', ',')}`;
-            
+
         document.querySelector('#card-progress-orders .card-value').textContent =
             dashboardData.ordens_andamento;
 
@@ -595,7 +595,7 @@ async function abrirDetalhesOrdem(ordemId) {
 
             return `
                                 <tr>
-                                    <td>${item.tipo}</td>
+                                    <td>${formatarTipoItem(item.tipo)}</td>
                                     <td>${item.descricao}</td>
                                     <td>R$ ${valor.toFixed(2).replace('.', ',')}</td>
                                 </tr>
@@ -865,7 +865,7 @@ async function imprimirOrdem(ordemId) {
     const itensHtml = itens.length > 0
         ? itens.map(item => `
             <tr>
-                <td>${item.tipo}</td>
+                <td>${formatarTipoItem(item.tipo)}</td>
                 <td>${item.descricao}</td>
                 <td>R$ ${Number(item.valor).toFixed(2).replace('.', ',')}</td>
             </tr>
@@ -1222,4 +1222,9 @@ async function excluirUsuario(id) {
     if (result.success) {
         renderSettingsData();
     }
+}
+function formatarTipoItem(tipo) {
+    if (tipo === 'Peca') return 'Peça';
+    if (tipo === 'Mao de obra') return 'Mão de obra';
+    return tipo;
 }
