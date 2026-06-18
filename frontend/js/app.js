@@ -1,6 +1,6 @@
 // Lógica Geral do App - Modais, formulários e requisições
 
-const API_BASE = '/Certificadora-de-Competencia-Especifica/backend/routes';
+const API_BASE = './backend/routes';
 
 async function apiRequest(endpoint, options = {}) {
     try {
