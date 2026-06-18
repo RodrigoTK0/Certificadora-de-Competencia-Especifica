@@ -834,7 +834,7 @@ async function abrirEditarOrdem(ordem) {
     openModal('order-edit');
 
     await carregarClientesNoSelectEdicaoOrdem();
-    await carregarVeiculosNoSelectEdicaoOrdem();
+    await carregarVeiculosNoSelectEdicaoOrdem(ordem.cliente_id);
 
     document.getElementById('edit-order-id').value = ordem.id;
     document.getElementById('edit-order-client').value = String(ordem.cliente_id);

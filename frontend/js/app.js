@@ -383,16 +383,22 @@ async function carregarClientesNoSelectEdicaoOrdem() {
     });
 }
 
-async function carregarVeiculosNoSelectEdicaoOrdem() {
+async function carregarVeiculosNoSelectEdicaoOrdem(clienteId = '') {
     const select = document.getElementById('edit-order-vehicle');
+
     if (!select) return;
 
     const veiculos = await apiRequest('veiculos.php');
+
     if (!veiculos) return;
 
     select.innerHTML = '<option value="">Selecione um veículo...</option>';
 
-    veiculos.forEach(veiculo => {
+    const veiculosFiltrados = clienteId
+        ? veiculos.filter(veiculo => String(veiculo.cliente_id) === String(clienteId))
+        : [];
+
+    veiculosFiltrados.forEach(veiculo => {
         select.innerHTML += `
             <option value="${veiculo.id}">
                 ${veiculo.marca} ${veiculo.modelo} (${veiculo.placa})
@@ -487,5 +493,15 @@ if (formUser) {
                 renderSettingsData();
             }
         }
+    });
+}
+const selectClienteEdicaoOS = document.getElementById('edit-order-client');
+
+if (selectClienteEdicaoOS) {
+    selectClienteEdicaoOS.addEventListener('change', async function () {
+        await carregarVeiculosNoSelectEdicaoOrdem(this.value);
+
+        const selectVeiculo = document.getElementById('edit-order-vehicle');
+        if (selectVeiculo) selectVeiculo.value = '';
     });
 }
