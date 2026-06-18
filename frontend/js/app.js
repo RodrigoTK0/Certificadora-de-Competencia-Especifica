@@ -1,6 +1,6 @@
 // Lógica Geral do App - Modais, formulários e requisições
 
-const API_BASE = './backend/routes';
+const API_BASE = '/Certificadora-de-Competencia-Especifica/backend/routes';
 
 async function apiRequest(endpoint, options = {}) {
     try {
@@ -421,6 +421,13 @@ if (formOrderEdit) {
         });
 
         if (!result) return;
+        const ordemId = formOrderEdit.querySelector('[name="id"]')?.value;
+
+        if (result.success) {
+            const itensSalvos = await salvarTodosItensEdicao(ordemId);
+
+            if (!itensSalvos) return;
+        }
 
         showToast(result.message, result.success ? 'success' : 'error');
 

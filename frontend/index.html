@@ -638,6 +638,25 @@
                         <label>Descrição do Problema</label>
                         <textarea id="edit-order-description" name="descricao" rows="4" required></textarea>
                     </div>
+                    <div class="form-group">
+                        <label>Itens da Ordem</label>
+
+                        <div class="table-container">
+                            <table id="table-edit-order-items">
+                                <thead>
+                                    <tr>
+                                        <th>Tipo</th>
+                                        <th>Descrição</th>
+                                        <th>Valor</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Itens via JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
 
                     <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem;">
                         <button type="button" class="btn glass" onclick="closeModal()">
@@ -671,8 +690,8 @@
                         <label>Tipo</label>
                         <select name="tipo" required>
                             <option value="">Selecione...</option>
-                            <option value="Peca">Peça</option>
-                            <option value="Mao de obra">Mão de obra</option>
+                            <option value="Peça">Peça</option>
+                            <option value="Mão de obra">Mão de obra</option>
                         </select>
                     </div>
 

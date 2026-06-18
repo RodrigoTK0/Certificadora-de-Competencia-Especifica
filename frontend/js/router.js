@@ -841,7 +841,10 @@ async function abrirEditarOrdem(ordem) {
     document.getElementById('edit-order-vehicle').value = String(ordem.veiculo_id);
     document.getElementById('edit-order-description').value = ordem.descricao || '';
 
+    await carregarItensEdicaoOrdem(ordem.id);
+
     const title = document.getElementById('edit-order-title');
+
     if (title) {
         title.textContent = `Editar Ordem #${String(ordem.id).padStart(3, '0')}`;
     }
@@ -1227,4 +1230,135 @@ function formatarTipoItem(tipo) {
     if (tipo === 'Peca') return 'Peça';
     if (tipo === 'Mao de obra') return 'Mão de obra';
     return tipo;
+}
+async function carregarItensEdicaoOrdem(ordemId) {
+    const tbody = document.querySelector('#table-edit-order-items tbody');
+
+    if (!tbody) return;
+
+    tbody.innerHTML = `
+        <tr>
+            <td colspan="4">Carregando itens...</td>
+        </tr>
+    `;
+
+    const itens = await apiRequest(`listar_itens_ordem.php?ordem_id=${ordemId}`);
+
+    if (!itens) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="4">Erro ao carregar itens da ordem.</td>
+            </tr>
+        `;
+        return;
+    }
+
+    if (itens.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="4">Nenhum item cadastrado nesta ordem.</td>
+            </tr>
+        `;
+        return;
+    }
+
+    tbody.innerHTML = itens.map(item => `
+        <tr>
+            <td>
+                <select id="item-tipo-${item.id}">
+                    <option value="Peça" ${formatarTipoItem(item.tipo) === 'Peça' ? 'selected' : ''}>Peça</option>
+                    <option value="Mão de obra" ${formatarTipoItem(item.tipo) === 'Mão de obra' ? 'selected' : ''}>Mão de obra</option>
+                </select>
+            </td>
+
+            <td>
+                <input type="text" id="item-descricao-${item.id}" value="${item.descricao || ''}">
+            </td>
+
+            <td>
+                <input type="number" step="0.01" id="item-valor-${item.id}" value="${item.valor}">
+            </td>
+
+            <td>
+                <div class="action-buttons">
+                   <button class="btn glass delete-btn"
+                        title="Excluir item"
+                        onclick="excluirItemEdicao(${item.id}, ${ordemId})">
+                        <i data-lucide="trash-2"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+
+    if (window.lucide) lucide.createIcons();
+}
+
+async function excluirItemEdicao(itemId, ordemId) {
+    const confirmar = await confirmarAcao(
+        'Deseja realmente excluir este item da ordem?'
+    );
+
+    if (!confirmar) return;
+
+    const formData = new FormData();
+
+    formData.append('id', itemId);
+    formData.append('ordem_id', ordemId);
+
+    const result = await apiRequest('excluir_item_ordem.php', {
+        method: 'POST',
+        body: formData
+    });
+
+    if (!result) return;
+
+    showToast(result.message, result.success ? 'success' : 'error');
+
+    if (result.success) {
+        carregarItensEdicaoOrdem(ordemId);
+
+        if (typeof renderOrdersData === 'function') renderOrdersData();
+        if (typeof renderDashboardData === 'function') renderDashboardData();
+        if (typeof renderReportsData === 'function') renderReportsData();
+    }
+}
+async function salvarTodosItensEdicao(ordemId) {
+    const linhas = document.querySelectorAll('#table-edit-order-items tbody tr');
+
+    for (const linha of linhas) {
+        const select = linha.querySelector('select');
+        const inputs = linha.querySelectorAll('input');
+
+        if (!select || inputs.length < 2) continue;
+
+        const itemId = select.id.replace('item-tipo-', '');
+        const descricao = inputs[0].value.trim();
+        const valor = inputs[1].value;
+
+        if (!descricao || !valor || Number(valor) <= 0) {
+            showToast('Preencha corretamente todos os itens.', 'error');
+            return false;
+        }
+
+        const formData = new FormData();
+
+        formData.append('id', itemId);
+        formData.append('ordem_id', ordemId);
+        formData.append('tipo', select.value);
+        formData.append('descricao', descricao);
+        formData.append('valor', valor);
+
+        const result = await apiRequest('atualizar_item_ordem.php', {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!result || !result.success) {
+            showToast('Erro ao salvar um dos itens.', 'error');
+            return false;
+        }
+    }
+
+    return true;
 }
