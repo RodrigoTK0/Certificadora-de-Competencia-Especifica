@@ -354,19 +354,27 @@ if (formItemOrder) {
 // Menu mobile
 const menuToggle = document.getElementById('menu-toggle');
 const sidebar = document.querySelector('.sidebar');
-const navLinks = document.querySelectorAll('.nav-link');
+const overlay = document.getElementById('sidebar-overlay');
 
-if (menuToggle && sidebar) {
-    menuToggle.addEventListener('click', () => {
-        sidebar.classList.toggle('active');
-    });
+menuToggle.addEventListener('click', () => {
+    sidebar.classList.toggle('active');
+    overlay.classList.toggle('active');
+});
 
-    navLinks.forEach(link => {
-        link.addEventListener('click', () => {
+overlay.addEventListener('click', () => {
+    sidebar.classList.remove('active');
+    overlay.classList.remove('active');
+});
+document.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', () => {
+
+        if (window.innerWidth <= 900) {
             sidebar.classList.remove('active');
-        });
+            overlay.classList.remove('active');
+        }
+
     });
-}
+});
 async function carregarClientesNoSelectEdicaoOrdem() {
     const select = document.getElementById('edit-order-client');
     if (!select) return;
